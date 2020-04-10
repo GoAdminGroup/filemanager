@@ -140,7 +140,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 		if h.hasOperation() {
 
-			del := template.HTML("-")
+			del := template.HTML("")
 			if h.permissions.AllowDelete {
 				del = linkWithAttr("grid-row-delete", language.GetHTML("delete"), false, template2.HTMLAttr("data-id="+f.Path))
 			}
