@@ -70,7 +70,7 @@ func linkWithAttr(class, c template2.HTML, pjax bool, attr template2.HTMLAttr) t
 }
 
 func (h *Handler) hasOperation() bool {
-	return h.permissions.AllowDownload || h.permissions.AllowDelete
+	return h.permissions.AllowDownload || h.permissions.AllowDelete || h.permissions.AllowMove
 }
 
 func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error) types.Panel {
@@ -108,6 +108,18 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	name := template2.HTML("")
 	op := template2.HTML("")
 
+	var movePopUp = new(action.PopUpAction)
+	movePopUpJs := template2.JS("")
+	moveFooter := template2.HTML("")
+	if h.permissions.AllowMove {
+		movePopUp = action.PopUp("_", language.Get("move"), nil).
+			SetBtnTitle(language.GetHTML("move")).
+			SetUrl(config.Url("/fm/move/popup?path=" + ctx.Query("path")))
+		movePopUp.SetBtnId("fm-move-btn")
+		movePopUpJs = movePopUp.Js()
+		moveFooter = movePopUp.FooterContent()
+	}
+
 	for k, f := range files {
 		if f.Path[0] != '/' {
 			f.Path = "/" + f.Path
@@ -130,21 +142,47 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 			del := template.HTML("-")
 			if h.permissions.AllowDelete {
-				del = linkWithAttr("grid-row-delete", template.HTML(language.Get("delete")), false, template2.HTMLAttr("data-id="+f.Path))
+				del = linkWithAttr("grid-row-delete", language.GetHTML("delete"), false, template2.HTMLAttr("data-id="+f.Path))
+			}
+			move := template.HTML("")
+			if h.permissions.AllowMove {
+				move = linkWithAttr("fm-move-btn", language.GetHTML("move"), false,
+					template2.HTMLAttr(`data-toggle="modal" data-target="#`+movePopUp.Id+`" data-id="`+f.Path+`"`))
+			}
+			download := template.HTML("")
+			if h.permissions.AllowDownload {
+				download = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false)
 			}
 
+			sep := template2.HTML(" | ")
+
 			if f.IsDirectory {
-				op = del
-			} else {
-				if h.permissions.AllowDownload {
-					if h.permissions.AllowDelete {
-						del = " | " + del
-					} else {
-						del = ""
-					}
-					op = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false) + del
-				} else {
+				if del != "" && move != "" {
+					op = del + sep + move
+				} else if del == "" && move != "" {
+					op = move
+				} else if del != "" && move == "" {
 					op = del
+				} else {
+					op = "-"
+				}
+			} else {
+				if download != "" && del != "" && move != "" {
+					op = download + sep + del + sep + move
+				} else if download != "" && del == "" && move != "" {
+					op = download + sep + move
+				} else if download != "" && del != "" && move == "" {
+					op = download + sep + del
+				} else if download != "" && del == "" && move == "" {
+					op = download
+				} else if download == "" && del == "" && move != "" {
+					op = move
+				} else if download == "" && del != "" && move == "" {
+					op = del
+				} else if download == "" && del != "" && move != "" {
+					op = del + sep + move
+				} else {
+					op = "-"
 				}
 			}
 
@@ -221,9 +259,9 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 	table := comp.DataTable().
 		SetHideFilterArea(true).
-		SetButtons(btnHTML + btns.FooterContent()).
+		SetButtons(btnHTML + btns.FooterContent() + moveFooter).
 		SetDeleteUrl(delUrl).
-		SetActionJs(btnsJs).
+		SetActionJs(btnsJs + movePopUpJs).
 		SetPrimaryKey("path").
 		SetNoAction().
 		SetHideRowSelector(true).

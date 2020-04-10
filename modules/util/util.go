@@ -80,6 +80,19 @@ func IsTextFile(filepath string) bool {
 	return util.IsText(buf[0:n])
 }
 
+func Substr(s string, pos, length int) string {
+	runes := []rune(s)
+	l := pos + length
+	if l > len(runes) {
+		l = len(runes)
+	}
+	return string(runes[pos:l])
+}
+
+func GetParentDirectory(directory string) string {
+	return Substr(directory, 0, strings.LastIndex(directory, "/"))
+}
+
 func ParseFileContentType(fileName string) string {
 	contentType := mime.TypeByExtension(filepath.Ext(fileName))
 	if strings.HasPrefix(contentType, "text/") {

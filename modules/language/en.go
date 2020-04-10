@@ -15,6 +15,7 @@ var EN = language.LangSet{
 
 	"filemanager.download": "Download",
 	"filemanager.delete":   "Delete",
+	"filemanager.move":     "Move",
 
 	"filemanager.home":           "Home",
 	"filemanager.last":           "Last",
@@ -24,4 +25,5 @@ var EN = language.LangSet{
 	"filemanager.create":         "Create",
 	"filemanager.input name":     "Input Name",
 	"filemanager.create success": "Create Succeed",
+	"filemanager.move success":   "Move Succeed",
 }

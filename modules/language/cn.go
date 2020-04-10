@@ -4,8 +4,8 @@ import "github.com/GoAdminGroup/go-admin/modules/language"
 
 var CN = language.LangSet{
 	"filemanager.not exist":     "不存在",
-	"filemanager.is not a dir":  "是一个文件夹",
-	"filemanager.is not a file": "是一个文件",
+	"filemanager.is not a dir":  "不是文件夹",
+	"filemanager.is not a file": "不是文件",
 	"filemanager.filemanager":   "文件管理器",
 
 	"filemanager.filename":         "名称",
@@ -24,5 +24,7 @@ var CN = language.LangSet{
 	"filemanager.input name":     "输入名称",
 	"filemanager.create success": "创建成功",
 
-	"filemanager.delete": "删除",
+	"filemanager.delete":       "删除",
+	"filemanager.move":         "移动",
+	"filemanager.move success": "移动成功",
 }

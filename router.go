@@ -20,6 +20,8 @@ func (f *FileManager) initRouter(srv service.List) *context.App {
 	authRoute.POST("/fm/create/dir/popup", f.handler.CreateDirPopUp)
 	authRoute.POST("/fm/create/dir", f.handler.CreateDir)
 	authRoute.POST("/fm/delete", f.handler.Delete)
+	authRoute.POST("/fm/move/popup", f.handler.MovePopup)
+	authRoute.POST("/fm/move", f.handler.Move)
 
 	return app
 }
