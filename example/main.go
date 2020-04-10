@@ -12,7 +12,6 @@ import (
 
 	"github.com/GoAdminGroup/filemanager"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/gin-gonic/gin"
@@ -39,7 +38,7 @@ func main() {
 			Prefix: "uploads",
 		},
 		Language: language.EN,
-		IndexUrl: "/",
+		IndexUrl: "/fm/files",
 		Debug:    true,
 		Theme:    "sword",
 		Animation: config.PageAnimation{
@@ -59,8 +58,6 @@ func main() {
 	}
 
 	r.Static("/uploads", "./uploads")
-
-	e.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
 		_ = r.Run(":9033")

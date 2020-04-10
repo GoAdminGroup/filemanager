@@ -8,7 +8,7 @@ var CN = language.LangSet{
 	"filemanager.is not a file": "是一个文件",
 	"filemanager.filemanager":   "文件管理器",
 
-	"filemanager.filename":         "名字",
+	"filemanager.filename":         "名称",
 	"filemanager.size":             "大小",
 	"filemanager.last modify time": "最后修改时间",
 	"filemanager.operation":        "操作",
