@@ -95,7 +95,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 			op = "-"
 		} else {
 			name = icon.Icon(icon.FileO, 2) + template2.HTML(f.Name)
-			op = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), "下载", false)
+			op = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false)
 		}
 		list[k] = map[string]types.InfoItem{
 			"name":        {Content: name},

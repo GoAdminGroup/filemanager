@@ -7,7 +7,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
 	_ "github.com/GoAdminGroup/themes/sword"
 
 	"github.com/GoAdminGroup/filemanager"
@@ -38,7 +38,7 @@ func main() {
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		Language: language.CN,
+		Language: language.EN,
 		IndexUrl: "/",
 		Debug:    true,
 		Theme:    "sword",
@@ -47,8 +47,13 @@ func main() {
 		},
 	}
 
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	if err := e.AddConfig(cfg).
-		AddPlugins(filemanager.NewFileManager("./dir")).
+		AddPlugins(filemanager.NewFileManager(dir + "/dir")).
 		Use(r); err != nil {
 		panic(err)
 	}
@@ -65,5 +70,5 @@ func main() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
-	e.MysqlConnection().Close()
+	e.SqliteConnection().Close()
 }
