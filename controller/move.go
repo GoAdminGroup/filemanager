@@ -94,7 +94,7 @@ func (h *Handler) MovePopup(ctx *context.Context) {
 		}
 	}
 
-	if relativePath != "." && relativePath != "" {
+	if relativePath != "." && relativePath != "/" {
 		parentDir := filepath.Dir(relativePath)
 		options += `<option value='` + parentDir + `'>.</option>`
 	}
