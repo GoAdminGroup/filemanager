@@ -9,10 +9,12 @@ var (
 	DirIsNotExist error
 	IsNotDir      error
 	IsNotFile     error
+	EmptyName     error
 )
 
 func Init() {
 	DirIsNotExist = errors.New(language.Get("not exist"))
 	IsNotDir = errors.New(language.Get("is not a dir"))
 	IsNotFile = errors.New(language.Get("is not a file"))
+	EmptyName = errors.New(language.Get("empty name"))
 }

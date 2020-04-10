@@ -14,4 +14,14 @@ var EN = language.LangSet{
 	"filemanager.operation":        "Operation",
 
 	"filemanager.download": "Download",
+	"filemanager.delete":   "Delete",
+
+	"filemanager.home":           "Home",
+	"filemanager.last":           "Last",
+	"filemanager.upload":         "Upload",
+	"filemanager.upload success": "Upload Succeed",
+	"filemanager.new directory":  "Create Directory",
+	"filemanager.create":         "Create",
+	"filemanager.input name":     "Input Name",
+	"filemanager.create success": "Create Succeed",
 }

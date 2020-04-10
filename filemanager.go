@@ -17,18 +17,56 @@ type FileManager struct {
 	root    string
 	handler *controller.Handler
 	conn    db.Connection
+
+	allowUpload    bool
+	allowCreateDir bool
+	allowDelete    bool
+	allowMove      bool
+	allowDownload  bool
 }
 
 func NewFileManager(rootPath string) *FileManager {
 	return &FileManager{
-		name: "filemanager",
-		root: rootPath,
+		name:           "filemanager",
+		root:           rootPath,
+		allowUpload:    true,
+		allowCreateDir: true,
+		allowDelete:    true,
+		allowMove:      true,
+		allowDownload:  true,
+	}
+}
+
+type Config struct {
+	AllowUpload    bool
+	AllowCreateDir bool
+	AllowDelete    bool
+	AllowMove      bool
+	AllowDownload  bool
+	Path           string
+}
+
+func NewFileManagerWithConfig(cfg Config) *FileManager {
+	return &FileManager{
+		name:           "filemanager",
+		root:           cfg.Path,
+		allowUpload:    cfg.AllowUpload,
+		allowCreateDir: cfg.AllowCreateDir,
+		allowDelete:    cfg.AllowDelete,
+		allowMove:      cfg.AllowMove,
+		allowDownload:  cfg.AllowDownload,
 	}
 }
 
 func (f *FileManager) InitPlugin(srv service.List) {
 	f.conn = db.GetConnection(srv)
-	f.handler = controller.NewHandler(f.root, f.conn)
+	f.handler = controller.NewHandler(f.root, f.conn, controller.Permission{
+		AllowUpload:    f.allowUpload,
+		AllowCreateDir: f.allowCreateDir,
+		AllowDelete:    f.allowDelete,
+		AllowMove:      f.allowMove,
+		AllowDownload:  f.allowDownload,
+	})
 	f.app = f.initRouter(srv)
 
 	language.Lang[language.CN].Combine(language2.CN)

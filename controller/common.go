@@ -15,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	template2 "html/template"
 	"net/http"
 	"net/url"
@@ -23,15 +24,25 @@ import (
 )
 
 type Handler struct {
-	root       string
-	conn       db.Connection
-	navButtons types.Buttons
+	root        string
+	conn        db.Connection
+	navButtons  types.Buttons
+	permissions Permission
 }
 
-func NewHandler(root string, conn db.Connection) *Handler {
+type Permission struct {
+	AllowUpload    bool
+	AllowCreateDir bool
+	AllowDelete    bool
+	AllowMove      bool
+	AllowDownload  bool
+}
+
+func NewHandler(root string, conn db.Connection, p Permission) *Handler {
 	return &Handler{
-		root: root,
-		conn: conn,
+		root:        root,
+		conn:        conn,
+		permissions: p,
 	}
 }
 
@@ -49,6 +60,17 @@ func link(u string, c template2.HTML, pjax bool) template2.HTML {
 		return template.Get(config.GetTheme()).Link().SetURL(u).SetContent(c).GetContent()
 	}
 	return template.Get(config.GetTheme()).Link().NoPjax().SetURL(u).SetContent(c).GetContent()
+}
+
+func linkWithAttr(class, c template2.HTML, pjax bool, attr template2.HTMLAttr) template2.HTML {
+	if pjax {
+		return template.Get(config.GetTheme()).Link().SetClass(class).SetAttributes(attr).SetContent(c).GetContent()
+	}
+	return template.Get(config.GetTheme()).Link().NoPjax().SetClass(class).SetAttributes(attr).SetContent(c).GetContent()
+}
+
+func (h *Handler) hasOperation() bool {
+	return h.permissions.AllowDownload || h.permissions.AllowDelete
 }
 
 func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error) types.Panel {
@@ -90,18 +112,43 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		if f.Path[0] != '/' {
 			f.Path = "/" + f.Path
 		}
+
 		if f.IsDirectory {
 			name = icon.Icon(icon.FolderO, 2) + link(config.Url("/fm/files?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
-			op = "-"
 		} else {
-			name = icon.Icon(icon.FileO, 2) + template2.HTML(f.Name)
-			op = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false)
+			name = icon.Icon(icon.File, 2) + template2.HTML(f.Name)
 		}
+
 		list[k] = map[string]types.InfoItem{
 			"name":        {Content: name},
 			"size":        {Content: template.HTML(util.ByteCountIEC(f.Size))},
 			"modify_time": {Content: template.HTML(time.Unix(f.LastModified, 0).Format("2006-01-02 15:04:05"))},
-			"operation":   {Content: op},
+			"path":        {Content: template.HTML(f.Path)},
+		}
+
+		if h.hasOperation() {
+
+			del := template.HTML("-")
+			if h.permissions.AllowDelete {
+				del = linkWithAttr("grid-row-delete", template.HTML(language.Get("delete")), false, template2.HTMLAttr("data-id="+f.Path))
+			}
+
+			if f.IsDirectory {
+				op = del
+			} else {
+				if h.permissions.AllowDownload {
+					if h.permissions.AllowDelete {
+						del = " | " + del
+					} else {
+						del = ""
+					}
+					op = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false) + del
+				} else {
+					op = del
+				}
+			}
+
+			list[k]["operation"] = types.InfoItem{Content: op}
 		}
 	}
 
@@ -110,7 +157,10 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 			"name":        {Content: link(config.Url("/fm/files"), template2.HTML("."), true)},
 			"size":        {Content: "-"},
 			"modify_time": {Content: "-"},
-			"operation":   {Content: "-"},
+		}
+
+		if h.hasOperation() {
+			list[length-1]["operation"] = types.InfoItem{Content: "-"}
 		}
 
 		if lastDir != "" {
@@ -118,21 +168,67 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 				"name":        {Content: link(config.Url("/fm/files?path="+url.QueryEscape(lastDir)), template2.HTML("..."), true)},
 				"size":        {Content: "-"},
 				"modify_time": {Content: "-"},
-				"operation":   {Content: "-"},
+			}
+
+			if h.hasOperation() {
+				list[length-2]["operation"] = types.InfoItem{Content: "-"}
 			}
 		}
 	}
 
+	escapeLastDir := url.QueryEscape(lastDir)
+
+	btns := make(types.Buttons, 0)
+
+	if h.permissions.AllowCreateDir {
+		btns = append(btns, types.GetDefaultButton(language.GetHTML("new directory"), icon.Plus,
+			action.PopUp("_", language.Get("new directory"), nil).
+				SetBtnTitle(language.GetHTML("create")).
+				SetUrl(config.Url("/fm/create/dir/popup?path="+escapeLastDir))))
+	}
+
+	if h.permissions.AllowUpload {
+		btns = append(btns, types.GetDefaultButton(language.GetHTML("upload"), icon.Upload,
+			action.FileUpload("_", nil).SetUrl(config.Url("/fm/upload?path="+url.QueryEscape(lastDir)))))
+	}
+
+	if isSubDir {
+		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(config.Url("/fm/files")))
+		btns = append(btns, homeBtn)
+		if lastDir != "" {
+			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(config.Url("/fm/files?path="+url.QueryEscape(lastDir))))
+			btns = append(btns, lastBtn)
+		}
+	}
+
+	btnHTML, btnsJs := btns.Content()
+
+	thead := types.Thead{
+		{Head: language.Get("filename"), Field: "name"},
+		{Head: language.Get("size"), Field: "size"},
+		{Head: language.Get("last modify time"), Field: "modify_time"},
+	}
+
+	if h.hasOperation() {
+		thead = append(thead, types.TheadItem{Head: language.Get("operation"), Field: "operation"})
+	}
+
+	delUrl := ""
+
+	if h.permissions.AllowDelete {
+		delUrl = config.Url("/fm/delete")
+	}
+
 	table := comp.DataTable().
 		SetHideFilterArea(true).
+		SetButtons(btnHTML + btns.FooterContent()).
+		SetDeleteUrl(delUrl).
+		SetActionJs(btnsJs).
+		SetPrimaryKey("path").
+		SetNoAction().
 		SetHideRowSelector(true).
 		SetInfoList(list).
-		SetThead(types.Thead{
-			{Head: language.Get("filename"), Field: "name"},
-			{Head: language.Get("size"), Field: "size"},
-			{Head: language.Get("last modify time"), Field: "modify_time"},
-			{Head: language.Get("operation"), Field: "operation"},
-		})
+		SetThead(thead)
 
 	alert := template.HTML("")
 	if err != nil {

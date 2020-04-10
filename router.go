@@ -16,6 +16,10 @@ func (f *FileManager) initRouter(srv service.List) *context.App {
 
 	authRoute.GET("/fm/files", f.handler.ListFiles)
 	authRoute.GET("/fm/download", f.handler.Download)
+	authRoute.POST("/fm/upload", f.handler.Upload)
+	authRoute.POST("/fm/create/dir/popup", f.handler.CreateDirPopUp)
+	authRoute.POST("/fm/create/dir", f.handler.CreateDir)
+	authRoute.POST("/fm/delete", f.handler.Delete)
 
 	return app
 }
