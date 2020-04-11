@@ -237,7 +237,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		}
 	}
 
-	if isSubDir && len(files) > 0 {
+	if isSubDir {
 		list[length-1] = map[string]types.InfoItem{
 			"name":        {Content: link(config.Url("/fm/files"), template2.HTML("."), true)},
 			"size":        {Content: "-"},

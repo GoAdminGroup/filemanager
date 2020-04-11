@@ -63,6 +63,7 @@ func (i *Code) Preview(content []byte) template.HTML {
         editor.setFontSize(14);
         editor.setReadOnly(true);
         editor.setOptions({useWorker: false});
+		editor.session.selection.clearSelection();
     </script>
 `).Get()
 }
