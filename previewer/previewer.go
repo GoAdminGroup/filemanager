@@ -20,7 +20,7 @@ func Preview(path string) (template.HTML, error) {
 	}
 
 	if filetype.IsImage(buf) {
-		return ImagePreviewer.Preview(buf), nil
+		return image.Preview(buf), nil
 	}
 
 	ext := filepath.Ext(path)
@@ -37,7 +37,7 @@ func Preview(path string) (template.HTML, error) {
 		Get(), nil
 }
 
-var ImagePreviewer = new(Image)
+var image = new(Image)
 
 var CodeExtensions = [...]string{
 	".go", ".php", ".html", ".css", ".js", ".py", ".md",
