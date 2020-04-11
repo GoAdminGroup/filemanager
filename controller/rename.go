@@ -51,6 +51,7 @@ func (h *Handler) RenamePopUp(ctx *context.Context) {
         </form>
 <script>
 	$('#` + popupID + ` button.btn.btn-primary').on('click', function (event) {
+		NProgress.start();
 		$.ajax({
                             method: 'post',
                             url: "` + GetUrl(prefix, "/rename") + `",
@@ -59,6 +60,7 @@ func (h *Handler) RenamePopUp(ctx *context.Context) {
 								path: "` + path + `"
 							},
                             success: function (data) {
+								NProgress.done();
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
                                 }
@@ -72,6 +74,7 @@ func (h *Handler) RenamePopUp(ctx *context.Context) {
                                 }
                             },
 							error: function (data) {
+								NProgress.done();
 								if (data.responseText !== "") {
 									swal(data.responseJSON.msg, '', 'error');								
 								} else {
