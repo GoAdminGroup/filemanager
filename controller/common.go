@@ -3,8 +3,10 @@ package controller
 import (
 	"bytes"
 	"github.com/GoAdminGroup/filemanager/models"
+	"github.com/GoAdminGroup/filemanager/modules/constant"
 	"github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
+	"github.com/GoAdminGroup/filemanager/modules/root"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -26,18 +28,26 @@ import (
 )
 
 type Handler struct {
-	root        string
+	roots       root.Roots
 	conn        db.Connection
 	navButtons  types.Buttons
 	permissions permission.Permission
 }
 
-func NewHandler(root string, conn db.Connection, p permission.Permission) *Handler {
+func NewHandler(root root.Roots, conn db.Connection, p permission.Permission) *Handler {
 	return &Handler{
-		root:        root,
+		roots:       root,
 		conn:        conn,
 		permissions: p,
 	}
+}
+
+func (h *Handler) Prefix(ctx *context.Context) string {
+	prefix := ctx.Query(constant.PrefixKey)
+	if prefix == "" {
+		return "def"
+	}
+	return prefix
 }
 
 func (h *Handler) Execute(ctx *context.Context, panel types.Panel, animation ...bool) *bytes.Buffer {
@@ -63,12 +73,13 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 	}
 
 	btns := make(types.Buttons, 0)
+	prefix := h.Prefix(ctx)
 
 	if isSubDir {
-		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(config.Url("/fm/files")))
+		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(GetUrl(prefix, "/list")))
 		btns = append(btns, homeBtn)
 		if lastDir != "" {
-			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(config.Url("/fm/files?path="+url.QueryEscape(lastDir))))
+			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir))))
 			btns = append(btns, lastBtn)
 		}
 	}
@@ -120,12 +131,17 @@ func (h *Handler) hasOperation() bool {
 	return h.permissions.HasOperation()
 }
 
+func GetUrl(prefix string, suffix string) string {
+	return config.Url("/fm/" + prefix + suffix)
+}
+
 func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error) types.Panel {
 	comp := template.Default()
 	path, _ := url.QueryUnescape(ctx.Query("path"))
 	defaultPageSize := 10
 	param := parameter.GetParam(ctx.Request.URL, defaultPageSize)
 	total := len(files)
+	prefix := h.Prefix(ctx)
 
 	if len(files) > param.PageSizeInt {
 		if len(files) > param.PageSizeInt*param.PageInt {
@@ -164,17 +180,18 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		renamePopUpJs = template2.JS("")
 		renameFooter  = template2.HTML("")
 	)
+
 	if h.permissions.AllowMove && len(files) > 0 {
 		movePopUp = action.PopUp("_", language.Get("move"), nil).
 			SetBtnTitle(language.GetHTML("move")).
-			SetUrl(config.Url("/fm/move/popup?path=" + ctx.Query("path")))
+			SetUrl(GetUrl(prefix, "/move/popup?path="+ctx.Query("path")))
 		movePopUp.SetBtnId("fm-move-btn")
 		movePopUpJs = movePopUp.Js()
 		moveFooter = movePopUp.FooterContent()
 
 		renamePopUp = action.PopUp("_", language.Get("rename"), nil).
 			SetBtnTitle(language.GetHTML("rename")).
-			SetUrl(config.Url("/fm/rename/popup?path=" + ctx.Query("path")))
+			SetUrl(GetUrl(prefix, "/rename/popup?path="+ctx.Query("path")))
 		renamePopUp.SetBtnId("fm-rename-btn")
 		renamePopUpJs = renamePopUp.Js()
 		renameFooter = renamePopUp.FooterContent()
@@ -186,9 +203,9 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		}
 
 		if f.IsDirectory {
-			name = icon.Icon(icon.FolderO, 2) + link(config.Url("/fm/files?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
+			name = icon.Icon(icon.FolderO, 2) + link(GetUrl(prefix, "/list?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
 		} else {
-			name = icon.Icon(icon.File, 2) + link(config.Url("/fm/preview?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
+			name = icon.Icon(icon.File, 2) + link(GetUrl(prefix, "/preview?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
 		}
 
 		list[k] = map[string]types.InfoItem{
@@ -213,7 +230,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 			}
 			download := template.HTML("")
 			if h.permissions.AllowDownload {
-				download = sep + link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false) + sep
+				download = sep + link(GetUrl(prefix, "/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false) + sep
 			}
 			rename := template.HTML("")
 			if h.permissions.AllowRename {
@@ -240,7 +257,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 	if isSubDir {
 		list[length-1] = map[string]types.InfoItem{
-			"name":        {Content: link(config.Url("/fm/files"), template2.HTML("."), true)},
+			"name":        {Content: link(GetUrl(prefix, "/list"), template2.HTML("."), true)},
 			"size":        {Content: "-"},
 			"modify_time": {Content: "-"},
 		}
@@ -251,7 +268,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 		if lastDir != "" {
 			list[length-2] = map[string]types.InfoItem{
-				"name":        {Content: link(config.Url("/fm/files?path="+url.QueryEscape(lastDir)), template2.HTML("..."), true)},
+				"name":        {Content: link(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir)), template2.HTML("..."), true)},
 				"size":        {Content: "-"},
 				"modify_time": {Content: "-"},
 			}
@@ -270,19 +287,19 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		btns = append(btns, types.GetDefaultButton(language.GetHTML("new directory"), icon.Plus,
 			action.PopUp("_", language.Get("new directory"), nil).
 				SetBtnTitle(language.GetHTML("create")).
-				SetUrl(config.Url("/fm/create/dir/popup?path="+escapeLastDir))))
+				SetUrl(GetUrl(prefix, "/create/dir/popup?path="+escapeLastDir))))
 	}
 
 	if h.permissions.AllowUpload {
 		btns = append(btns, types.GetDefaultButton(language.GetHTML("upload"), icon.Upload,
-			action.FileUpload("_", nil).SetUrl(config.Url("/fm/upload?path="+ctx.Query("path")))))
+			action.FileUpload("_", nil).SetUrl(GetUrl(prefix, "/upload?path="+ctx.Query("path")))))
 	}
 
 	if isSubDir {
-		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(config.Url("/fm/files")))
+		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(GetUrl(prefix, "/list")))
 		btns = append(btns, homeBtn)
 		if lastDir != "" {
-			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(config.Url("/fm/files?path="+url.QueryEscape(lastDir))))
+			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir))))
 			btns = append(btns, lastBtn)
 		}
 	}
@@ -302,7 +319,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	delUrl := ""
 
 	if h.permissions.AllowDelete {
-		delUrl = config.Url("/fm/delete")
+		delUrl = GetUrl(prefix, "/delete")
 	}
 
 	table := comp.DataTable().

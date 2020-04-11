@@ -8,9 +8,10 @@ import (
 )
 
 type MoveParam struct {
-	Src   string
-	Dist  string
-	Error error
+	Src    string
+	Dist   string
+	Prefix string
+	Error  error
 }
 
 func (g *Guardian) Move(ctx *context.Context) {
@@ -28,8 +29,8 @@ func (g *Guardian) Move(ctx *context.Context) {
 		distDir = ""
 	}
 
-	distDir = g.root + distDir
-	src = g.root + src
+	distDir = g.roots.GetFromPrefix(ctx) + distDir
+	src = g.roots.GetFromPrefix(ctx) + src
 
 	if !util.IsDirectory(distDir) {
 		ctx.SetUserValue(deleteParamKey, &MoveParam{Error: errors.IsNotDir})
@@ -38,8 +39,9 @@ func (g *Guardian) Move(ctx *context.Context) {
 	}
 
 	ctx.SetUserValue(deleteParamKey, &MoveParam{
-		Src:  src,
-		Dist: distDir + "/" + filepath.Base(src),
+		Src:    src,
+		Dist:   distDir + "/" + filepath.Base(src),
+		Prefix: g.GetPrefix(ctx),
 	})
 	ctx.Next()
 }

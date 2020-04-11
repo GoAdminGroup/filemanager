@@ -9,9 +9,10 @@ import (
 )
 
 type DeleteParam struct {
-	Path  string
-	Error error
-	Paths []string
+	Path   string
+	Prefix string
+	Error  error
+	Paths  []string
 }
 
 func (g *Guardian) Delete(ctx *context.Context) {
@@ -22,15 +23,17 @@ func (g *Guardian) Delete(ctx *context.Context) {
 		return
 	}
 
-	relativePaths := ctx.FormValue("id")
-	relativePathArr := strings.Split(relativePaths, ",")
+	var (
+		relativePaths   = ctx.FormValue("id")
+		relativePathArr = strings.Split(relativePaths, ",")
 
-	paths := make([]string, 0)
+		paths = make([]string, 0)
+	)
 
 	for _, relativePath := range relativePathArr {
-		path := filepath.Join(g.root, relativePath)
+		path := filepath.Join(g.roots.GetFromPrefix(ctx), relativePath)
 
-		if relativePath == "" || !strings.Contains(path, g.root) || !util.FileExist(path) || strings.Contains(path, "..") {
+		if relativePath == "" || !strings.Contains(path, g.roots.GetFromPrefix(ctx)) || !util.FileExist(path) || strings.Contains(path, "..") {
 			ctx.SetUserValue(deleteParamKey, &DeleteParam{Error: errors.DirIsNotExist})
 			ctx.Next()
 			return
@@ -40,8 +43,9 @@ func (g *Guardian) Delete(ctx *context.Context) {
 
 	}
 	ctx.SetUserValue(deleteParamKey, &DeleteParam{
-		Path:  relativePaths,
-		Paths: paths,
+		Path:   relativePaths,
+		Paths:  paths,
+		Prefix: g.GetPrefix(ctx),
 	})
 	ctx.Next()
 }

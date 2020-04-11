@@ -1,6 +1,7 @@
 package guard
 
 import (
+	"github.com/GoAdminGroup/filemanager/modules/constant"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
@@ -12,9 +13,7 @@ type PreviewParam struct {
 
 func (g *Guardian) Preview(ctx *context.Context) {
 
-	var (
-		relativePath, path, err = g.getPaths(ctx)
-	)
+	relativePath, path, err := g.getPaths(ctx)
 
 	if !util.IsFile(path) {
 		err = errors.IsNotFile
@@ -25,6 +24,7 @@ func (g *Guardian) Preview(ctx *context.Context) {
 			Path:     relativePath,
 			FullPath: path,
 			Error:    err,
+			Prefix:   ctx.Query(constant.PrefixKey),
 		},
 	})
 	ctx.Next()

@@ -7,6 +7,7 @@ import (
 
 var (
 	DirIsNotExist error
+	WrongPrefix   error
 	IsNotDir      error
 	IsNotFile     error
 	EmptyName     error
@@ -21,4 +22,5 @@ func Init() {
 	EmptyName = errors.New(language.Get("empty name"))
 	NoFile = errors.New(language.Get("no files"))
 	NoPermission = errors.New(language.Get("no permission"))
+	WrongPrefix = errors.New(language.Get("wrong prefix"))
 }

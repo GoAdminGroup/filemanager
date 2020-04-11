@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/error"
 	language2 "github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
+	"github.com/GoAdminGroup/filemanager/modules/root"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -14,10 +15,10 @@ import (
 )
 
 type FileManager struct {
-	app  *context.App
-	name string
-	root string
-	conn db.Connection
+	app   *context.App
+	name  string
+	roots root.Roots
+	conn  db.Connection
 
 	handler *controller.Handler
 	guard   *guard.Guardian
@@ -33,7 +34,7 @@ type FileManager struct {
 func NewFileManager(rootPath string) *FileManager {
 	return &FileManager{
 		name:           "filemanager",
-		root:           rootPath,
+		roots:          root.Roots{"def": rootPath},
 		allowUpload:    true,
 		allowCreateDir: true,
 		allowDelete:    true,
@@ -56,7 +57,7 @@ type Config struct {
 func NewFileManagerWithConfig(cfg Config) *FileManager {
 	return &FileManager{
 		name:           "filemanager",
-		root:           cfg.Path,
+		roots:          root.Roots{"def": cfg.Path},
 		allowUpload:    cfg.AllowUpload,
 		allowCreateDir: cfg.AllowCreateDir,
 		allowDelete:    cfg.AllowDelete,
@@ -76,14 +77,19 @@ func (f *FileManager) InitPlugin(srv service.List) {
 		AllowRename:    f.allowRename,
 		AllowDownload:  f.allowDownload,
 	}
-	f.handler = controller.NewHandler(f.root, f.conn, p)
-	f.guard = guard.New(f.root, f.conn, p)
+	f.handler = controller.NewHandler(f.roots, f.conn, p)
+	f.guard = guard.New(f.roots, f.conn, p)
 	f.app = f.initRouter(srv)
 
 	language.Lang[language.CN].Combine(language2.CN)
 	language.Lang[language.EN].Combine(language2.EN)
 
 	errors.Init()
+}
+
+func (f *FileManager) AddRoot(key, value string) *FileManager {
+	f.roots.Add(key, value)
+	return f
 }
 
 func (f *FileManager) GetRequest() []context.Path {

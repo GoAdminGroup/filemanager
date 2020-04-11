@@ -1,8 +1,10 @@
 package guard
 
 import (
+	"github.com/GoAdminGroup/filemanager/modules/constant"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
+	"github.com/GoAdminGroup/filemanager/modules/root"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -13,13 +15,13 @@ import (
 
 type Guardian struct {
 	conn        db.Connection
-	root        string
+	roots       root.Roots
 	permissions permission.Permission
 }
 
-func New(r string, c db.Connection, p permission.Permission) *Guardian {
+func New(r root.Roots, c db.Connection, p permission.Permission) *Guardian {
 	return &Guardian{
-		root:        r,
+		roots:       r,
 		conn:        c,
 		permissions: p,
 	}
@@ -36,8 +38,17 @@ const (
 
 type Base struct {
 	Path     string
+	Prefix   string
 	FullPath string
 	Error    error
+}
+
+func (g *Guardian) GetPrefix(ctx *context.Context) string {
+	prefix := ctx.Query(constant.PrefixKey)
+	if prefix == "" {
+		return "def"
+	}
+	return prefix
 }
 
 func (g *Guardian) getPaths(ctx *context.Context) (string, string, error) {
@@ -45,9 +56,9 @@ func (g *Guardian) getPaths(ctx *context.Context) (string, string, error) {
 		err error
 
 		relativePath, _ = url.QueryUnescape(ctx.Query("path"))
-		path            = filepath.Join(g.root, relativePath)
+		path            = filepath.Join(g.roots.GetFromPrefix(ctx), relativePath)
 	)
-	if !strings.Contains(path, g.root) {
+	if !strings.Contains(path, g.roots.GetFromPrefix(ctx)) {
 		err = errors.DirIsNotExist
 	}
 

@@ -8,9 +8,10 @@ import (
 )
 
 type RenameParam struct {
-	Src   string
-	Dist  string
-	Error error
+	Src    string
+	Dist   string
+	Error  error
+	Prefix string
 }
 
 func (g *Guardian) Rename(ctx *context.Context) {
@@ -24,13 +25,14 @@ func (g *Guardian) Rename(ctx *context.Context) {
 		return
 	}
 
-	if filepath.Ext(distName) == "" && util.IsFile(src) {
+	if filepath.Ext(distName) == "" && util.IsFile(g.roots.GetFromPrefix(ctx)+src) {
 		distName += filepath.Ext(src)
 	}
 
 	ctx.SetUserValue(renameParamKey, &RenameParam{
-		Src:  g.root + src,
-		Dist: g.root + filepath.Dir(src) + "/" + distName,
+		Src:    g.roots.GetFromPrefix(ctx) + src,
+		Dist:   g.roots.GetFromPrefix(ctx) + filepath.Dir(src) + "/" + distName,
+		Prefix: g.GetPrefix(ctx),
 	})
 	ctx.Next()
 }

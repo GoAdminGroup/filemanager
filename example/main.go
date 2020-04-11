@@ -38,7 +38,7 @@ func main() {
 			Prefix: "uploads",
 		},
 		Language: language.EN,
-		IndexUrl: "/fm/files",
+		IndexUrl: "/fm/def/list",
 		Debug:    true,
 		Theme:    "sword",
 		Animation: config.PageAnimation{

@@ -5,7 +5,6 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -43,15 +42,18 @@ func (h *Handler) Move(ctx *context.Context) {
 
 func (h *Handler) MovePopup(ctx *context.Context) {
 
-	popupID := ctx.FormValue("popup_id")
-	fileName := ctx.FormValue("id")
-	relativePath, _ := url.QueryUnescape(ctx.Query("path"))
+	var (
+		popupID  = ctx.FormValue("popup_id")
+		fileName = ctx.FormValue("id")
 
-	path := filepath.Join(h.root, relativePath)
+		relativePath, _ = url.QueryUnescape(ctx.Query("path"))
 
-	options := ""
+		path    = filepath.Join(h.roots.GetFromPrefix(ctx), relativePath)
+		options = ""
+		prefix  = h.Prefix(ctx)
 
-	fileInfos, err := ioutil.ReadDir(path)
+		fileInfos, err = ioutil.ReadDir(path)
+	)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -98,7 +100,7 @@ func (h *Handler) MovePopup(ctx *context.Context) {
 	$('#` + popupID + ` button.btn.btn-primary').on('click', function (event) {
 		$.ajax({
                             method: 'post',
-                            url: "` + config.Url("/fm/move") + `",
+                            url: "` + GetUrl(prefix, "/move") + `",
                             data: {
 								dist: $('#fm_move_select').val(),
 								src: "` + fileName + `"

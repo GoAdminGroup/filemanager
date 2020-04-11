@@ -1,6 +1,7 @@
 package guard
 
 import (
+	"github.com/GoAdminGroup/filemanager/modules/constant"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
@@ -43,6 +44,7 @@ func (g *Guardian) Upload(ctx *context.Context) {
 			Path:     relativePath,
 			FullPath: path,
 			Error:    err,
+			Prefix:   ctx.Query(constant.PrefixKey),
 		},
 		Files: files,
 	})
@@ -66,12 +68,14 @@ func (g *Guardian) CreateDir(ctx *context.Context) {
 		return
 	}
 
-	relativePath := ctx.FormValue("path")
-	name := ctx.FormValue("name")
+	var (
+		relativePath = ctx.FormValue("path")
 
-	path := filepath.Join(g.root, relativePath)
+		name = ctx.FormValue("name")
+		path = filepath.Join(g.roots.GetFromPrefix(ctx), relativePath)
+	)
 
-	if name == "" || !strings.Contains(path, g.root) {
+	if name == "" || !strings.Contains(path, g.roots.GetFromPrefix(ctx)) {
 		ctx.SetUserValue(createDirParamKey, &CreateDirParam{
 			Base: Base{Error: errors.DirIsNotExist},
 		})
@@ -99,6 +103,7 @@ func (g *Guardian) CreateDir(ctx *context.Context) {
 		Base: Base{
 			Path:     relativePath,
 			FullPath: path,
+			Prefix:   ctx.Query(constant.PrefixKey),
 		},
 		Dir: path + "/" + name,
 	})

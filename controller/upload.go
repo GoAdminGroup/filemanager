@@ -4,7 +4,6 @@ import (
 	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"net/http"
 	"net/url"
@@ -33,8 +32,11 @@ func (h *Handler) Upload(ctx *context.Context) {
 
 func (h *Handler) CreateDirPopUp(ctx *context.Context) {
 
-	popupID := ctx.FormValue("popup_id")
-	path, _ := url.QueryUnescape(ctx.Query("path"))
+	var (
+		popupID = ctx.FormValue("popup_id")
+		path, _ = url.QueryUnescape(ctx.Query("path"))
+		prefix  = h.Prefix(ctx)
+	)
 
 	popupForm := `<form>
           <div class="form-group">
@@ -45,7 +47,7 @@ func (h *Handler) CreateDirPopUp(ctx *context.Context) {
 	$('#` + popupID + ` button.btn.btn-primary').on('click', function (event) {
 		$.ajax({
                             method: 'post',
-                            url: "` + config.Url("/fm/create/dir") + `",
+                            url: "` + GetUrl(prefix, "/create/dir") + `",
                             data: {
 								name: $('#dir_name_input').val(),
 								path: "` + path + `"

@@ -12,9 +12,11 @@ import (
 )
 
 func (h *Handler) ListFiles(ctx *context.Context) {
-	param := guard.GetFilesParam(ctx)
 
-	filesOfDir := make(models.Files, 0)
+	var (
+		param      = guard.GetFilesParam(ctx)
+		filesOfDir = make(models.Files, 0)
+	)
 
 	if param.Error != nil {
 		h.table(ctx, filesOfDir, param.Error)

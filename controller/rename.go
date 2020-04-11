@@ -4,7 +4,6 @@ import (
 	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"net/http"
 	"os"
 )
@@ -39,8 +38,11 @@ func (h *Handler) Rename(ctx *context.Context) {
 
 func (h *Handler) RenamePopUp(ctx *context.Context) {
 
-	popupID := ctx.FormValue("popup_id")
-	path := ctx.FormValue("id")
+	var (
+		popupID = ctx.FormValue("popup_id")
+		path    = ctx.FormValue("id")
+		prefix  = h.Prefix(ctx)
+	)
 
 	popupForm := `<form>
           <div class="form-group">
@@ -51,7 +53,7 @@ func (h *Handler) RenamePopUp(ctx *context.Context) {
 	$('#` + popupID + ` button.btn.btn-primary').on('click', function (event) {
 		$.ajax({
                             method: 'post',
-                            url: "` + config.Url("/fm/rename") + `",
+                            url: "` + GetUrl(prefix, "/rename") + `",
                             data: {
 								name: $('#rename_input').val(),
 								path: "` + path + `"

@@ -7,24 +7,23 @@ import (
 )
 
 type FilesParam struct {
-	Base
+	*Base
 }
 
 func (g *Guardian) Files(ctx *context.Context) {
 
-	var (
-		relativePath, path, err = g.getPaths(ctx)
-	)
+	relativePath, path, err := g.getPaths(ctx)
 
 	if !util.IsDirectory(path) {
 		err = errors.IsNotDir
 	}
 
 	ctx.SetUserValue(filesParamKey, &FilesParam{
-		Base: Base{
+		Base: &Base{
 			Path:     relativePath,
 			FullPath: path,
 			Error:    err,
+			Prefix:   g.GetPrefix(ctx),
 		},
 	})
 	ctx.Next()
