@@ -87,7 +87,7 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 			GetContent(),
 		Title:       language.Get("filemanager"),
 		Description: fixedDescription(path),
-	}, false)
+	}, false, true)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 

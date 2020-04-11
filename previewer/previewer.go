@@ -26,7 +26,7 @@ func Preview(path string) (template.HTML, error) {
 	ext := filepath.Ext(path)
 
 	if IsCode(ext) {
-		return CodePreviewer.Preview(buf), nil
+		return NewCode(ext).Preview(buf), nil
 	}
 
 	return html.DivEl().SetClass("preview-content").
@@ -38,11 +38,11 @@ func Preview(path string) (template.HTML, error) {
 }
 
 var ImagePreviewer = new(Image)
-var CodePreviewer = new(Code)
 
 var CodeExtensions = [...]string{
 	".go", ".php", ".html", ".css", ".js", ".py", ".md",
 	".c", ".cpp", ".java", ".sh", ".tmpl", ".mod", ".sum",
+	".sql", ".json",
 }
 
 func IsCode(ext string) bool {
