@@ -2,6 +2,7 @@ package guard
 
 import (
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
+	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"path/filepath"
 )
@@ -23,7 +24,7 @@ func (g *Guardian) Rename(ctx *context.Context) {
 		return
 	}
 
-	if filepath.Ext(distName) == "" {
+	if filepath.Ext(distName) == "" && util.IsFile(src) {
 		distName += filepath.Ext(src)
 	}
 
