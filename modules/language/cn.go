@@ -15,7 +15,7 @@ var CN = language.LangSet{
 
 	"filemanager.download": "下载",
 
-	"filemanager.home":           "回首页",
+	"filemanager.home":           "根目录",
 	"filemanager.last":           "上一层",
 	"filemanager.upload":         "上传",
 	"filemanager.upload success": "上传成功",

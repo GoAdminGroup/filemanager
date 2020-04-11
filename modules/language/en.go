@@ -17,7 +17,7 @@ var EN = language.LangSet{
 	"filemanager.delete":   "Delete",
 	"filemanager.move":     "Move",
 
-	"filemanager.home":           "Home",
+	"filemanager.home":           "Root",
 	"filemanager.last":           "Last",
 	"filemanager.upload":         "Upload",
 	"filemanager.upload success": "Upload Succeed",
