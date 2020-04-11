@@ -25,9 +25,11 @@ var CN = language.LangSet{
 	"filemanager.create success": "创建成功",
 
 	"filemanager.delete":       "删除",
+	"filemanager.rename":       "重命名",
 	"filemanager.move":         "移动",
 	"filemanager.move success": "移动成功",
 
-	"filemanager.no permission": "没有权限",
-	"filemanager.no files":      "没有文件",
+	"filemanager.rename success": "重命名成功",
+	"filemanager.no permission":  "没有权限",
+	"filemanager.no files":       "没有文件",
 }

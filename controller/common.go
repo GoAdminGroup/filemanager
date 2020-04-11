@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -122,7 +123,6 @@ func (h *Handler) hasOperation() bool {
 func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error) types.Panel {
 	comp := template.Default()
 	path, _ := url.QueryUnescape(ctx.Query("path"))
-
 	defaultPageSize := 10
 	param := parameter.GetParam(ctx.Request.URL, defaultPageSize)
 	total := len(files)
@@ -155,9 +155,15 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	name := template2.HTML("")
 	op := template2.HTML("")
 
-	var movePopUp = new(action.PopUpAction)
-	movePopUpJs := template2.JS("")
-	moveFooter := template2.HTML("")
+	var (
+		movePopUp   = new(action.PopUpAction)
+		movePopUpJs = template2.JS("")
+		moveFooter  = template2.HTML("")
+
+		renamePopUp   = new(action.PopUpAction)
+		renamePopUpJs = template2.JS("")
+		renameFooter  = template2.HTML("")
+	)
 	if h.permissions.AllowMove && len(files) > 0 {
 		movePopUp = action.PopUp("_", language.Get("move"), nil).
 			SetBtnTitle(language.GetHTML("move")).
@@ -165,6 +171,13 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		movePopUp.SetBtnId("fm-move-btn")
 		movePopUpJs = movePopUp.Js()
 		moveFooter = movePopUp.FooterContent()
+
+		renamePopUp = action.PopUp("_", language.Get("rename"), nil).
+			SetBtnTitle(language.GetHTML("rename")).
+			SetUrl(config.Url("/fm/rename/popup?path=" + ctx.Query("path")))
+		renamePopUp.SetBtnId("fm-rename-btn")
+		renamePopUpJs = renamePopUp.Js()
+		renameFooter = renamePopUp.FooterContent()
 	}
 
 	for k, f := range files {
@@ -187,50 +200,38 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 		if h.hasOperation() {
 
+			sep := template2.HTML(" | ")
+
 			del := template.HTML("")
 			if h.permissions.AllowDelete {
-				del = linkWithAttr("grid-row-delete", language.GetHTML("delete"), false, template2.HTMLAttr("data-id="+f.Path))
+				del = sep + linkWithAttr("grid-row-delete", language.GetHTML("delete"), false, template2.HTMLAttr("data-id="+f.Path)) + sep
 			}
 			move := template.HTML("")
 			if h.permissions.AllowMove {
-				move = linkWithAttr("fm-move-btn", language.GetHTML("move"), false,
-					template2.HTMLAttr(`data-toggle="modal" data-target="#`+movePopUp.Id+`" data-id="`+f.Path+`"`))
+				move = sep + linkWithAttr("fm-move-btn", language.GetHTML("move"), false,
+					template2.HTMLAttr(`data-toggle="modal" data-target="#`+movePopUp.Id+`" data-id="`+f.Path+`"`)) + sep
 			}
 			download := template.HTML("")
 			if h.permissions.AllowDownload {
-				download = link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false)
+				download = sep + link(config.Url("/fm/download?path="+url.QueryEscape(f.Path)), template.HTML(language.Get("download")), false) + sep
+			}
+			rename := template.HTML("")
+			if h.permissions.AllowRename {
+				rename = sep + linkWithAttr("fm-rename-btn", language.GetHTML("rename"), false,
+					template2.HTMLAttr(`data-toggle="modal" data-target="#`+renamePopUp.Id+`" data-id="`+f.Path+`"`)) + sep
 			}
 
-			sep := template2.HTML(" | ")
-
 			if f.IsDirectory {
-				if del != "" && move != "" {
-					op = del + sep + move
-				} else if del == "" && move != "" {
-					op = move
-				} else if del != "" && move == "" {
-					op = del
-				} else {
-					op = "-"
-				}
+				op = del + move + rename
 			} else {
-				if download != "" && del != "" && move != "" {
-					op = download + sep + del + sep + move
-				} else if download != "" && del == "" && move != "" {
-					op = download + sep + move
-				} else if download != "" && del != "" && move == "" {
-					op = download + sep + del
-				} else if download != "" && del == "" && move == "" {
-					op = download
-				} else if download == "" && del == "" && move != "" {
-					op = move
-				} else if download == "" && del != "" && move == "" {
-					op = del
-				} else if download == "" && del != "" && move != "" {
-					op = del + sep + move
-				} else {
-					op = "-"
-				}
+				op = download + del + move + rename
+			}
+
+			if op == "" {
+				op = "-"
+			} else {
+				o := strings.Replace(string(op), " |  | ", " | ", -1)
+				op = template.HTML(o[3 : len(o)-3])
 			}
 
 			list[k]["operation"] = types.InfoItem{Content: op}
@@ -274,7 +275,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 	if h.permissions.AllowUpload {
 		btns = append(btns, types.GetDefaultButton(language.GetHTML("upload"), icon.Upload,
-			action.FileUpload("_", nil).SetUrl(config.Url("/fm/upload?path="+url.QueryEscape(lastDir)))))
+			action.FileUpload("_", nil).SetUrl(config.Url("/fm/upload?path="+ctx.Query("path")))))
 	}
 
 	if isSubDir {
@@ -306,9 +307,9 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 	table := comp.DataTable().
 		SetHideFilterArea(true).
-		SetButtons(btnHTML + btns.FooterContent() + moveFooter).
+		SetButtons(btnHTML + btns.FooterContent() + moveFooter + renameFooter).
 		SetDeleteUrl(delUrl).
-		SetActionJs(btnsJs + movePopUpJs).
+		SetActionJs(btnsJs + movePopUpJs + renamePopUpJs).
 		SetPrimaryKey("path").
 		SetNoAction().
 		SetHideRowSelector(true).

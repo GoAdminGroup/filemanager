@@ -23,6 +23,8 @@ func (f *FileManager) initRouter(srv service.List) *context.App {
 	authRoute.POST("/fm/move/popup", f.handler.MovePopup)
 	authRoute.POST("/fm/move", f.guard.Move, f.handler.Move)
 	authRoute.GET("/fm/preview", f.guard.Preview, f.handler.Preview)
+	authRoute.POST("/fm/rename/popup", f.handler.RenamePopUp)
+	authRoute.POST("/fm/rename", f.guard.Rename, f.handler.Rename)
 
 	return app
 }

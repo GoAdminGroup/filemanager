@@ -2,6 +2,7 @@ package permission
 
 type Permission struct {
 	AllowUpload    bool
+	AllowRename    bool
 	AllowCreateDir bool
 	AllowDelete    bool
 	AllowMove      bool

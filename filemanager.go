@@ -27,6 +27,7 @@ type FileManager struct {
 	allowDelete    bool
 	allowMove      bool
 	allowDownload  bool
+	allowRename    bool
 }
 
 func NewFileManager(rootPath string) *FileManager {
@@ -38,6 +39,7 @@ func NewFileManager(rootPath string) *FileManager {
 		allowDelete:    true,
 		allowMove:      true,
 		allowDownload:  true,
+		allowRename:    true,
 	}
 }
 
@@ -47,6 +49,7 @@ type Config struct {
 	AllowDelete    bool
 	AllowMove      bool
 	AllowDownload  bool
+	AllowRename    bool
 	Path           string
 }
 
@@ -58,6 +61,7 @@ func NewFileManagerWithConfig(cfg Config) *FileManager {
 		allowCreateDir: cfg.AllowCreateDir,
 		allowDelete:    cfg.AllowDelete,
 		allowMove:      cfg.AllowMove,
+		allowRename:    cfg.AllowRename,
 		allowDownload:  cfg.AllowDownload,
 	}
 }
@@ -69,6 +73,7 @@ func (f *FileManager) InitPlugin(srv service.List) {
 		AllowCreateDir: f.allowCreateDir,
 		AllowDelete:    f.allowDelete,
 		AllowMove:      f.allowMove,
+		AllowRename:    f.allowRename,
 		AllowDownload:  f.allowDownload,
 	}
 	f.handler = controller.NewHandler(f.root, f.conn, p)

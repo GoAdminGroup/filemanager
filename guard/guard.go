@@ -17,7 +17,7 @@ type Guardian struct {
 	permissions permission.Permission
 }
 
-func New( r string, c db.Connection, p permission.Permission) *Guardian {
+func New(r string, c db.Connection, p permission.Permission) *Guardian {
 	return &Guardian{
 		root:        r,
 		conn:        c,
@@ -30,7 +30,8 @@ const (
 	uploadParamKey    = "upload_param"
 	createDirParamKey = "create_dir_param"
 	deleteParamKey    = "delete_param"
-	previewParamKey     = "preview_param"
+	renameParamKey    = "rename_param"
+	previewParamKey   = "preview_param"
 )
 
 type Base struct {
