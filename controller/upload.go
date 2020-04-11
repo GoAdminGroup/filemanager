@@ -1,28 +1,22 @@
 package controller
 
 import (
-	errors "github.com/GoAdminGroup/filemanager/modules/error"
+	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/modules/language"
-	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"net/http"
 	"net/url"
 	"os"
-	"path/filepath"
-	"strings"
 )
 
 func (h *Handler) Upload(ctx *context.Context) {
-	relativePath, _ := url.QueryUnescape(ctx.Query("path"))
-	path := filepath.Join(h.root, relativePath)
+	param := guard.GetUploadParam(ctx)
+	for k := range param.Files {
+		for _, fileObj := range param.Files[k] {
 
-	form := ctx.Request.MultipartForm
-	for k := range form.File {
-		for _, fileObj := range form.File[k] {
-
-			err := file.SaveMultipartFile(fileObj, path+"/"+fileObj.Filename)
+			err := file.SaveMultipartFile(fileObj, param.FullPath+"/"+fileObj.Filename)
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 					"code": http.StatusInternalServerError,
@@ -92,39 +86,21 @@ func (h *Handler) CreateDirPopUp(ctx *context.Context) {
 }
 
 func (h *Handler) CreateDir(ctx *context.Context) {
-	relativePath := ctx.FormValue("path")
-	name := ctx.FormValue("name")
 
-	path := filepath.Join(h.root, relativePath)
+	param := guard.GetCreateDirParam(ctx)
 
-	if name == "" {
+	if param.Error != nil {
 		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"code": http.StatusBadRequest,
-			"msg":  errors.EmptyName.Error(),
+			"msg":  param.Error.Error(),
 		})
 		return
 	}
 
-	if !strings.Contains(path, h.root) || !util.FileExist(path) {
-		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"code": http.StatusBadRequest,
-			"msg":  errors.DirIsNotExist.Error(),
-		})
-		return
-	}
-
-	if !util.IsDirectory(path) {
-		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"code": http.StatusBadRequest,
-			"msg":  errors.IsNotDir.Error(),
-		})
-		return
-	}
-
-	err := os.MkdirAll(path+"/"+name, os.ModePerm)
+	err := os.MkdirAll(param.Dir, os.ModePerm)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"code": http.StatusBadRequest,
+		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
 		return

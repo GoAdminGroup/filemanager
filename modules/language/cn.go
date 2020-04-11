@@ -27,4 +27,7 @@ var CN = language.LangSet{
 	"filemanager.delete":       "删除",
 	"filemanager.move":         "移动",
 	"filemanager.move success": "移动成功",
+
+	"filemanager.no permission": "没有权限",
+	"filemanager.no files":      "没有文件",
 }

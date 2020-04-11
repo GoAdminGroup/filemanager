@@ -1,7 +1,7 @@
 package controller
 
 import (
-	errors "github.com/GoAdminGroup/filemanager/modules/error"
+	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
@@ -14,33 +14,18 @@ import (
 )
 
 func (h *Handler) Move(ctx *context.Context) {
-	distDir := ctx.FormValue("dist")
-	src := ctx.FormValue("src")
 
-	if src == "" || distDir == "" {
+	param := guard.GetMoveParam(ctx)
+
+	if param.Error != nil {
 		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"code": http.StatusBadRequest,
-			"msg":  errors.EmptyName.Error(),
+			"msg":  param.Error.Error(),
 		})
 		return
 	}
 
-	if distDir == "/" {
-		distDir = ""
-	}
-
-	distDir = h.root + distDir
-	src = h.root + src
-
-	if !util.IsDirectory(distDir) {
-		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"code": http.StatusBadRequest,
-			"msg":  errors.IsNotDir.Error(),
-		})
-		return
-	}
-
-	err := os.Rename(src, distDir+"/"+filepath.Base(src))
+	err := os.Rename(param.Src, param.Dist)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{

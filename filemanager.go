@@ -2,8 +2,10 @@ package filemanager
 
 import (
 	"github.com/GoAdminGroup/filemanager/controller"
+	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/modules/error"
 	language2 "github.com/GoAdminGroup/filemanager/modules/language"
+	"github.com/GoAdminGroup/filemanager/modules/permission"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -12,11 +14,13 @@ import (
 )
 
 type FileManager struct {
-	app     *context.App
-	name    string
-	root    string
+	app  *context.App
+	name string
+	root string
+	conn db.Connection
+
 	handler *controller.Handler
-	conn    db.Connection
+	guard   *guard.Guardian
 
 	allowUpload    bool
 	allowCreateDir bool
@@ -60,13 +64,15 @@ func NewFileManagerWithConfig(cfg Config) *FileManager {
 
 func (f *FileManager) InitPlugin(srv service.List) {
 	f.conn = db.GetConnection(srv)
-	f.handler = controller.NewHandler(f.root, f.conn, controller.Permission{
+	p := permission.Permission{
 		AllowUpload:    f.allowUpload,
 		AllowCreateDir: f.allowCreateDir,
 		AllowDelete:    f.allowDelete,
 		AllowMove:      f.allowMove,
 		AllowDownload:  f.allowDownload,
-	})
+	}
+	f.handler = controller.NewHandler(f.root, f.conn, p)
+	f.guard = guard.New(f.root, f.conn, p)
 	f.app = f.initRouter(srv)
 
 	language.Lang[language.CN].Combine(language2.CN)

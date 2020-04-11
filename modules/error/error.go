@@ -10,6 +10,8 @@ var (
 	IsNotDir      error
 	IsNotFile     error
 	EmptyName     error
+	NoFile        error
+	NoPermission  error
 )
 
 func Init() {
@@ -17,4 +19,6 @@ func Init() {
 	IsNotDir = errors.New(language.Get("is not a dir"))
 	IsNotFile = errors.New(language.Get("is not a file"))
 	EmptyName = errors.New(language.Get("empty name"))
+	NoFile = errors.New(language.Get("no files"))
+	NoPermission = errors.New(language.Get("no permission"))
 }

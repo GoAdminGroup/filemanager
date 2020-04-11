@@ -1,40 +1,27 @@
 package controller
 
 import (
+	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/models"
-	"github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"io/ioutil"
 	"mime"
-	"net/url"
 	"path/filepath"
 	"strings"
 )
 
 func (h *Handler) ListFiles(ctx *context.Context) {
-	relativePath, _ := url.QueryUnescape(ctx.Query("path"))
+	param := guard.GetFilesParam(ctx)
 
-	path := filepath.Join(h.root, relativePath)
+	filesOfDir := make(models.Files, 0)
 
-	var filesOfDir = make(models.Files, 0)
-
-	if !strings.Contains(path, h.root) {
-		h.table(ctx, filesOfDir, errors.DirIsNotExist)
+	if param.Error != nil {
+		h.table(ctx, filesOfDir, param.Error)
 		return
 	}
 
-	if !util.FileExist(path) {
-		h.table(ctx, filesOfDir, errors.DirIsNotExist)
-		return
-	}
-
-	if !util.IsDirectory(path) {
-		h.table(ctx, filesOfDir, errors.IsNotDir)
-		return
-	}
-
-	fileInfos, err := ioutil.ReadDir(path)
+	fileInfos, err := ioutil.ReadDir(param.FullPath)
 
 	if err != nil {
 		h.table(ctx, filesOfDir, err)
@@ -52,7 +39,7 @@ func (h *Handler) ListFiles(ctx *context.Context) {
 			Name:         fileInfo.Name(),
 			Size:         int(fileInfo.Size()),
 			Extension:    strings.TrimLeft(filepath.Ext(fileInfo.Name()), "."),
-			Path:         filepath.Join(relativePath, fileInfo.Name()),
+			Path:         filepath.Join(param.Path, fileInfo.Name()),
 			Mime:         mime.TypeByExtension(filepath.Ext(fileInfo.Name())),
 			LastModified: fileInfo.ModTime().Unix(),
 		}

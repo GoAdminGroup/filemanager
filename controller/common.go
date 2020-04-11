@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/GoAdminGroup/filemanager/models"
 	"github.com/GoAdminGroup/filemanager/modules/language"
+	"github.com/GoAdminGroup/filemanager/modules/permission"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -27,18 +28,10 @@ type Handler struct {
 	root        string
 	conn        db.Connection
 	navButtons  types.Buttons
-	permissions Permission
+	permissions permission.Permission
 }
 
-type Permission struct {
-	AllowUpload    bool
-	AllowCreateDir bool
-	AllowDelete    bool
-	AllowMove      bool
-	AllowDownload  bool
-}
-
-func NewHandler(root string, conn db.Connection, p Permission) *Handler {
+func NewHandler(root string, conn db.Connection, p permission.Permission) *Handler {
 	return &Handler{
 		root:        root,
 		conn:        conn,
@@ -50,6 +43,59 @@ func (h *Handler) Execute(ctx *context.Context, panel types.Panel, animation ...
 	return plugins.Execute(ctx, h.conn, h.navButtons, auth.Auth(ctx), panel, animation...)
 }
 
+func (h *Handler) preview(ctx *context.Context, content template2.HTML, relativePath, path string, err error) {
+
+	comp := template.Default()
+
+	alert := template.HTML("")
+	if err != nil {
+		alert = comp.Alert().Warning(err.Error())
+	}
+
+	isSubDir := relativePath != "" && err == nil
+	lastDir := ""
+	if isSubDir {
+		dir := filepath.Dir(relativePath)
+		if dir != "." && dir != "/" {
+			lastDir = dir
+		}
+	}
+
+	btns := make(types.Buttons, 0)
+
+	if isSubDir {
+		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(config.Url("/fm/files")))
+		btns = append(btns, homeBtn)
+		if lastDir != "" {
+			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(config.Url("/fm/files?path="+url.QueryEscape(lastDir))))
+			btns = append(btns, lastBtn)
+		}
+	}
+
+	btnHTML, _ := btns.Content()
+
+	table := comp.DataTable().
+		SetHideRowSelector(true).
+		SetButtons(btnHTML + btns.FooterContent())
+
+	buf := h.Execute(ctx, types.Panel{
+		Content: alert + comp.Box().
+			SetBody(content).
+			SetHeader(table.GetDataTableHeader()).
+			SetNoPadding().
+			WithHeadBorder().
+			GetContent(),
+		Title:       language.Get("filemanager"),
+		Description: fixedDescription(path),
+	}, false)
+	ctx.HTML(http.StatusOK, buf.String())
+}
+
+func fixedDescription(des string) string {
+	return des
+	//return string(html.SpanEl().SetAttr("title", des).SetContent(template2.HTML(des)).Get())
+}
+
 func (h *Handler) table(ctx *context.Context, files models.Files, err error) {
 	buf := h.Execute(ctx, h.tablePanel(ctx, files, err), false)
 	ctx.HTML(http.StatusOK, buf.String())
@@ -57,24 +103,25 @@ func (h *Handler) table(ctx *context.Context, files models.Files, err error) {
 
 func link(u string, c template2.HTML, pjax bool) template2.HTML {
 	if pjax {
-		return template.Get(config.GetTheme()).Link().SetURL(u).SetContent(c).GetContent()
+		return template.Default().Link().SetURL(u).SetContent(c).GetContent()
 	}
-	return template.Get(config.GetTheme()).Link().NoPjax().SetURL(u).SetContent(c).GetContent()
+	return template.Default().Link().NoPjax().SetURL(u).SetContent(c).GetContent()
 }
 
 func linkWithAttr(class, c template2.HTML, pjax bool, attr template2.HTMLAttr) template2.HTML {
 	if pjax {
-		return template.Get(config.GetTheme()).Link().SetClass(class).SetAttributes(attr).SetContent(c).GetContent()
+		return template.Default().Link().SetClass(class).SetAttributes(attr).SetContent(c).GetContent()
 	}
-	return template.Get(config.GetTheme()).Link().NoPjax().SetClass(class).SetAttributes(attr).SetContent(c).GetContent()
+	return template.Default().Link().NoPjax().SetClass(class).SetAttributes(attr).SetContent(c).GetContent()
 }
 
 func (h *Handler) hasOperation() bool {
-	return h.permissions.AllowDownload || h.permissions.AllowDelete || h.permissions.AllowMove
+	return h.permissions.HasOperation()
 }
 
 func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error) types.Panel {
-	comp := template.Get(config.GetTheme())
+	comp := template.Default()
+	path, _ := url.QueryUnescape(ctx.Query("path"))
 
 	defaultPageSize := 10
 	param := parameter.GetParam(ctx.Request.URL, defaultPageSize)
@@ -89,7 +136,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	}
 
 	length := len(files)
-	path, _ := url.QueryUnescape(ctx.Query("path"))
+
 	isSubDir := path != "" && err == nil
 	lastDir := ""
 	if isSubDir {
@@ -111,7 +158,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	var movePopUp = new(action.PopUpAction)
 	movePopUpJs := template2.JS("")
 	moveFooter := template2.HTML("")
-	if h.permissions.AllowMove {
+	if h.permissions.AllowMove && len(files) > 0 {
 		movePopUp = action.PopUp("_", language.Get("move"), nil).
 			SetBtnTitle(language.GetHTML("move")).
 			SetUrl(config.Url("/fm/move/popup?path=" + ctx.Query("path")))
@@ -128,7 +175,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		if f.IsDirectory {
 			name = icon.Icon(icon.FolderO, 2) + link(config.Url("/fm/files?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
 		} else {
-			name = icon.Icon(icon.File, 2) + template2.HTML(f.Name)
+			name = icon.Icon(icon.File, 2) + link(config.Url("/fm/preview?path="+url.QueryEscape(f.Path)), template2.HTML(f.Name), true)
 		}
 
 		list[k] = map[string]types.InfoItem{
@@ -190,7 +237,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		}
 	}
 
-	if isSubDir {
+	if isSubDir && len(files) > 0 {
 		list[length-1] = map[string]types.InfoItem{
 			"name":        {Content: link(config.Url("/fm/files"), template2.HTML("."), true)},
 			"size":        {Content: "-"},
@@ -268,13 +315,17 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		SetInfoList(list).
 		SetThead(thead)
 
+	return h.panel(ctx, path, err, table, total, defaultPageSize)
+}
+
+func (h *Handler) panel(ctx *context.Context, path string, err error, table types.DataTableAttribute, total, defaultPageSize int) types.Panel {
 	alert := template.HTML("")
 	if err != nil {
-		alert = template.Get(config.GetTheme()).Alert().Warning(err.Error())
+		alert = template.Default().Alert().Warning(err.Error())
 	}
 
 	return types.Panel{
-		Content: alert + comp.Box().
+		Content: alert + template.Default().Box().
 			SetBody(table.GetContent()).
 			SetNoPadding().
 			SetHeader(table.GetDataTableHeader()).
@@ -286,6 +337,6 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 			}).GetContent()).
 			GetContent(),
 		Title:       language.Get("filemanager"),
-		Description: path,
+		Description: fixedDescription(path),
 	}
 }

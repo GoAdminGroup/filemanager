@@ -26,4 +26,7 @@ var EN = language.LangSet{
 	"filemanager.input name":     "Input Name",
 	"filemanager.create success": "Create Succeed",
 	"filemanager.move success":   "Move Succeed",
+
+	"filemanager.no permission": "No Permission",
+	"filemanager.no files":      "No Files",
 }

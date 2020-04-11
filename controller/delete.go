@@ -1,31 +1,24 @@
 package controller
 
 import (
-	errors "github.com/GoAdminGroup/filemanager/modules/error"
-	"github.com/GoAdminGroup/filemanager/modules/util"
+	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/go-admin/context"
 	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
 )
 
 func (h *Handler) Delete(ctx *context.Context) {
-	relativePaths := ctx.FormValue("id")
+	param := guard.GetDeleteParam(ctx)
 
-	relativePathArr := strings.Split(relativePaths, ",")
+	if param.Error != nil {
+		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
+			"code": http.StatusBadRequest,
+			"msg":  param.Error.Error(),
+		})
+		return
+	}
 
-	for _, relativePath := range relativePathArr {
-		path := filepath.Join(h.root, relativePath)
-
-		if relativePath == "" || !strings.Contains(path, h.root) || !util.FileExist(path) || strings.Contains(path, "..") {
-			ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-				"code": http.StatusBadRequest,
-				"msg":  errors.DirIsNotExist.Error(),
-			})
-			return
-		}
-
+	for _, path := range param.Paths {
 		err := os.RemoveAll(path)
 
 		if err != nil {
