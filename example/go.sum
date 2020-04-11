@@ -4,6 +4,8 @@ github.com/GoAdminGroup/filemanager v0.0.0-20200410083747-e6da830ef199 h1:QxT52i
 github.com/GoAdminGroup/filemanager v0.0.0-20200410083747-e6da830ef199/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
 github.com/GoAdminGroup/filemanager v0.0.0-20200410085837-ca7b93ca0f91 h1:ZFIs5s7tVEVjg9tdjxB2Gtb7e9fT9em8fFem5IJXbU4=
 github.com/GoAdminGroup/filemanager v0.0.0-20200410085837-ca7b93ca0f91/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
+github.com/GoAdminGroup/filemanager v0.0.0-20200411093002-6f092eedc35b h1:6RmWpzuRklpHUCUvyzUIj6b9CEQ5VWd6QOcWtcWhYQY=
+github.com/GoAdminGroup/filemanager v0.0.0-20200411093002-6f092eedc35b/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200410083319-f934ce8f19ec h1:ti6wfNcu8rlMeg5OZ4VUozuFqFwdNouRSOTKozvYtXY=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200410083319-f934ce8f19ec/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
 github.com/GoAdminGroup/html v0.0.1 h1:SdWNWl4OKPsvDk2GDp5ZKD6ceWoN8n4Pj6cUYxavUd0=
@@ -41,6 +43,8 @@ github.com/golang/protobuf v1.3.3/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaW
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 h1:EGx4pi6eqNxGaHF6qqu48+N2wcFQ5qg5FXgOdqsJ5d8=
 github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
+github.com/h2non/filetype v1.0.12 h1:yHCsIe0y2cvbDARtJhGBTD2ecvqMSTvlIcph9En/Zao=
+github.com/h2non/filetype v1.0.12/go.mod h1:319b3zT68BvV+WRj7cwy856M2ehB3HqNOt6sy1HndBY=
 github.com/json-iterator/go v1.1.9 h1:9yzud/Ht36ygwatGx56VwCZtlI/2AD15T1X2sjSuGns=
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7C0MuV77Wo=
