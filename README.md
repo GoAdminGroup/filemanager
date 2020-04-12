@@ -14,3 +14,8 @@ GO111MODULE=on go run main.go
 ```
 
 login and then visit: [http://localhost:9033/admin/fm/def/list](http://localhost:9033/admin/fm/def/list)
+
+## TODO
+
+- [ ] Customize previewer
+- [ ] Get permanent/temporary link

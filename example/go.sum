@@ -20,6 +20,10 @@ github.com/GoAdminGroup/go-admin v1.2.8-0.20200411094858-29b4722e6bdd h1:bnfUHL9
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200411094858-29b4722e6bdd/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200412014539-cbbfea09645b h1:aX/pBeqDG1m2JT9hrVY/64sNSjpZXrbqgWZtACzJzEE=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200412014539-cbbfea09645b/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
+github.com/GoAdminGroup/go-admin v1.2.8-0.20200412023239-7d0b34437e9c h1:qTE/+5AirIvso0V/V0yDbtHA2ULyrZZow64wNPj1uzM=
+github.com/GoAdminGroup/go-admin v1.2.8-0.20200412023239-7d0b34437e9c/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
+github.com/GoAdminGroup/go-admin v1.2.8-0.20200412031239-33efbf0c33b3 h1:a7dqMIPTJxPHBmFv/poecpXYXL4LQgDevRiwvw+ThXo=
+github.com/GoAdminGroup/go-admin v1.2.8-0.20200412031239-33efbf0c33b3/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
 github.com/GoAdminGroup/html v0.0.1 h1:SdWNWl4OKPsvDk2GDp5ZKD6ceWoN8n4Pj6cUYxavUd0=
 github.com/GoAdminGroup/html v0.0.1/go.mod h1:A1laTJaOx8sQ64p2dE8IqtstDeCNBHEazrEp7hR5VvM=
 github.com/GoAdminGroup/themes v0.0.30-0.20200409025656-74ebc1308000 h1:RTaCu1r8vASJRzfxYN4c9RG1QdlZM2g/LMVgmRN5H3E=

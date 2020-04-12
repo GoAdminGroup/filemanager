@@ -40,14 +40,14 @@ func Preview(path string) (template.HTML, error) {
 
 var image = new(Image)
 
-var CodeExtensions = [...]string{
+var codeExtensions = [...]string{
 	".go", ".php", ".html", ".css", ".js", ".py", ".md",
 	".c", ".cpp", ".java", ".sh", ".tmpl", ".mod", ".sum",
-	".sql", ".json",
+	".sql", ".json", ".txt",
 }
 
 func IsCode(ext string) bool {
-	for _, e := range CodeExtensions {
+	for _, e := range codeExtensions {
 		if ext == e {
 			return true
 		}
