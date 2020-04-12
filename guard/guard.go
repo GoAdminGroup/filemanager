@@ -56,9 +56,9 @@ func (g *Guardian) getPaths(ctx *context.Context) (string, string, error) {
 		err error
 
 		relativePath, _ = url.QueryUnescape(ctx.Query("path"))
-		path            = filepath.Join(g.roots.GetFromPrefix(ctx), relativePath)
+		path            = filepath.Join(g.roots.GetPathFromPrefix(ctx), relativePath)
 	)
-	if !strings.Contains(path, g.roots.GetFromPrefix(ctx)) {
+	if !strings.Contains(path, g.roots.GetPathFromPrefix(ctx)) {
 		err = errors.DirIsNotExist
 	}
 

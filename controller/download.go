@@ -16,12 +16,12 @@ func (h *Handler) Download(ctx *context.Context) {
 	var (
 		relativePath, _ = url.QueryUnescape(ctx.Query("path"))
 		raw             = ctx.Query("raw") == "true"
-		path            = filepath.Join(h.roots.GetFromPrefix(ctx), relativePath)
+		path            = filepath.Join(h.roots.GetPathFromPrefix(ctx), relativePath)
 	)
 
 	var filesOfDir = make(models.Files, 0)
 
-	if !strings.Contains(path, h.roots.GetFromPrefix(ctx)) {
+	if !strings.Contains(path, h.roots.GetPathFromPrefix(ctx)) {
 		h.table(ctx, filesOfDir, errors.DirIsNotExist)
 		return
 	}

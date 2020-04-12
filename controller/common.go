@@ -87,7 +87,7 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 			SetNoPadding().
 			WithHeadBorder().
 			GetContent(),
-		Title:       language.Get("filemanager"),
+		Title:       language.Get(h.roots.GetTitleFromPrefix(ctx)),
 		Description: fixedDescription(relativePath),
 	}, false, true)
 }
@@ -342,7 +342,7 @@ func (h *Handler) panel(ctx *context.Context, path string, err error, table type
 				Param:        parameter.GetParam(ctx.Request.URL, defaultPageSize),
 			}).GetContent()).
 			GetContent(),
-		Title:       language.Get("filemanager"),
+		Title:       language.Get(h.roots.GetTitleFromPrefix(ctx)),
 		Description: fixedDescription(path),
 	}
 }

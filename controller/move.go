@@ -48,7 +48,7 @@ func (h *Handler) MovePopup(ctx *context.Context) {
 
 		relativePath, _ = url.QueryUnescape(ctx.Query("path"))
 
-		path    = filepath.Join(h.roots.GetFromPrefix(ctx), relativePath)
+		path    = filepath.Join(h.roots.GetPathFromPrefix(ctx), relativePath)
 		options = ""
 		prefix  = h.Prefix(ctx)
 

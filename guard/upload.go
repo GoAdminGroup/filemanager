@@ -72,10 +72,10 @@ func (g *Guardian) CreateDir(ctx *context.Context) {
 		relativePath = ctx.FormValue("path")
 
 		name = ctx.FormValue("name")
-		path = filepath.Join(g.roots.GetFromPrefix(ctx), relativePath)
+		path = filepath.Join(g.roots.GetPathFromPrefix(ctx), relativePath)
 	)
 
-	if name == "" || !strings.Contains(path, g.roots.GetFromPrefix(ctx)) {
+	if name == "" || !strings.Contains(path, g.roots.GetPathFromPrefix(ctx)) {
 		ctx.SetUserValue(createDirParamKey, &CreateDirParam{
 			Base: Base{Error: errors.DirIsNotExist},
 		})

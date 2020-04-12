@@ -54,12 +54,12 @@ func (i *Code) Preview(content []byte) template.HTML {
 	<pre id="preview-code" class="ace_editor" style="min-height:580px;">
         <textarea class="ace_text-input"></textarea>
     </pre>
-	<div id="ace-code-content" style="display:none;">` + template.HTML(content) + `</div>
+	<div id="ace-code-content" style="display:none;">`+template.HTML(content)+`</div>
     <script>
         editor = ace.edit("preview-code");
 		editor.setValue($("#ace-code-content").html());
         editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/` + ext + `");
+        editor.session.setMode("ace/mode/`+ext+`");
         editor.setFontSize(14);
         editor.setReadOnly(true);
         editor.setOptions({useWorker: false});

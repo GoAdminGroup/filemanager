@@ -25,13 +25,13 @@ func (g *Guardian) Rename(ctx *context.Context) {
 		return
 	}
 
-	if filepath.Ext(distName) == "" && util.IsFile(g.roots.GetFromPrefix(ctx)+src) {
+	if filepath.Ext(distName) == "" && util.IsFile(g.roots.GetPathFromPrefix(ctx)+src) {
 		distName += filepath.Ext(src)
 	}
 
 	ctx.SetUserValue(renameParamKey, &RenameParam{
-		Src:    g.roots.GetFromPrefix(ctx) + src,
-		Dist:   g.roots.GetFromPrefix(ctx) + filepath.Dir(src) + "/" + distName,
+		Src:    g.roots.GetPathFromPrefix(ctx) + src,
+		Dist:   g.roots.GetPathFromPrefix(ctx) + filepath.Dir(src) + "/" + distName,
 		Prefix: g.GetPrefix(ctx),
 	})
 	ctx.Next()

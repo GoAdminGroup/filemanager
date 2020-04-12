@@ -31,9 +31,9 @@ func (g *Guardian) Delete(ctx *context.Context) {
 	)
 
 	for _, relativePath := range relativePathArr {
-		path := filepath.Join(g.roots.GetFromPrefix(ctx), relativePath)
+		path := filepath.Join(g.roots.GetPathFromPrefix(ctx), relativePath)
 
-		if relativePath == "" || !strings.Contains(path, g.roots.GetFromPrefix(ctx)) || !util.FileExist(path) || strings.Contains(path, "..") {
+		if relativePath == "" || !strings.Contains(path, g.roots.GetPathFromPrefix(ctx)) || !util.FileExist(path) || strings.Contains(path, "..") {
 			ctx.SetUserValue(deleteParamKey, &DeleteParam{Error: errors.DirIsNotExist})
 			ctx.Next()
 			return

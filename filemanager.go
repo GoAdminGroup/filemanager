@@ -31,10 +31,19 @@ type FileManager struct {
 
 const Name = "filemanager"
 
-func NewFileManager(rootPath string) *FileManager {
+func NewFileManager(rootPath string, titles ...string) *FileManager {
+
+	if rootPath == "" {
+		panic("filemanager: create fail, wrong path")
+	}
+
+	title := Name
+	if len(titles) > 0 {
+		title = titles[0]
+	}
 	return &FileManager{
 		Base:           &plugins.Base{PlugName: Name},
-		roots:          root.Roots{"def": rootPath},
+		roots:          root.Roots{"def": root.Root{Path: rootPath, Title: title}},
 		allowUpload:    true,
 		allowCreateDir: true,
 		allowDelete:    true,
@@ -52,12 +61,22 @@ type Config struct {
 	AllowDownload  bool
 	AllowRename    bool
 	Path           string
+	Title          string
 }
 
 func NewFileManagerWithConfig(cfg Config) *FileManager {
+
+	if cfg.Path == "" {
+		panic("filemanager: create fail, wrong path")
+	}
+
+	if cfg.Title == "" {
+		cfg.Title = Name
+	}
+
 	return &FileManager{
 		Base:           &plugins.Base{PlugName: Name},
-		roots:          root.Roots{"def": cfg.Path},
+		roots:          root.Roots{"def": root.Root{Path: cfg.Path, Title: cfg.Title}},
 		allowUpload:    cfg.AllowUpload,
 		allowCreateDir: cfg.AllowCreateDir,
 		allowDelete:    cfg.AllowDelete,
@@ -92,7 +111,7 @@ func (f *FileManager) InitPlugin(srv service.List) {
 	errors.Init()
 }
 
-func (f *FileManager) AddRoot(key, value string) *FileManager {
+func (f *FileManager) AddRoot(key string, value root.Root) *FileManager {
 	f.roots.Add(key, value)
 	return f
 }

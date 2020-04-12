@@ -29,8 +29,8 @@ func (g *Guardian) Move(ctx *context.Context) {
 		distDir = ""
 	}
 
-	distDir = g.roots.GetFromPrefix(ctx) + distDir
-	src = g.roots.GetFromPrefix(ctx) + src
+	distDir = g.roots.GetPathFromPrefix(ctx) + distDir
+	src = g.roots.GetPathFromPrefix(ctx) + src
 
 	if !util.IsDirectory(distDir) {
 		ctx.SetUserValue(deleteParamKey, &MoveParam{Error: errors.IsNotDir})
