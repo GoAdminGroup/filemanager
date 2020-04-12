@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 )
 
 func (h *Handler) Upload(ctx *context.Context) {
@@ -15,7 +16,7 @@ func (h *Handler) Upload(ctx *context.Context) {
 	for k := range param.Files {
 		for _, fileObj := range param.Files[k] {
 
-			err := file.SaveMultipartFile(fileObj, param.FullPath+"/"+fileObj.Filename)
+			err := file.SaveMultipartFile(fileObj, filepath.FromSlash(param.FullPath+"/"+fileObj.Filename))
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 					"code": http.StatusInternalServerError,
@@ -102,7 +103,7 @@ func (h *Handler) CreateDir(ctx *context.Context) {
 		return
 	}
 
-	err := os.MkdirAll(param.Dir, os.ModePerm)
+	err := os.MkdirAll(filepath.FromSlash(param.Dir), os.ModePerm)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"code": http.StatusInternalServerError,

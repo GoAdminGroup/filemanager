@@ -14,7 +14,7 @@ type Previewer interface {
 }
 
 func Preview(path string) (template.HTML, error) {
-	buf, err := ioutil.ReadFile(path)
+	buf, err := ioutil.ReadFile(filepath.FromSlash(path))
 
 	if err != nil {
 		return "", err

@@ -19,3 +19,6 @@ login and then visit: [http://localhost:9033/admin/fm/def/list](http://localhost
 
 - [ ] Customize previewer
 - [ ] Get permanent/temporary link
+- [ ] Add shortcuts
+- [ ] Check weather override
+- [ ] CLI

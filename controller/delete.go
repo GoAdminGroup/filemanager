@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func (h *Handler) Delete(ctx *context.Context) {
@@ -19,7 +20,7 @@ func (h *Handler) Delete(ctx *context.Context) {
 	}
 
 	for _, path := range param.Paths {
-		err := os.RemoveAll(path)
+		err := os.RemoveAll(filepath.FromSlash(path))
 
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, map[string]interface{}{

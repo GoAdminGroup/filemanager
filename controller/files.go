@@ -23,7 +23,7 @@ func (h *Handler) ListFiles(ctx *context.Context) {
 		return
 	}
 
-	fileInfos, err := ioutil.ReadDir(param.FullPath)
+	fileInfos, err := ioutil.ReadDir(filepath.FromSlash(param.FullPath))
 
 	if err != nil {
 		h.table(ctx, filesOfDir, err)

@@ -24,7 +24,7 @@ func (h *Handler) Move(ctx *context.Context) {
 		return
 	}
 
-	err := os.Rename(param.Src, param.Dist)
+	err := os.Rename(filepath.FromSlash(param.Src), filepath.FromSlash(param.Dist))
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -52,7 +52,7 @@ func (h *Handler) MovePopup(ctx *context.Context) {
 		options = ""
 		prefix  = h.Prefix(ctx)
 
-		fileInfos, err = ioutil.ReadDir(path)
+		fileInfos, err = ioutil.ReadDir(filepath.FromSlash(path))
 	)
 
 	if err != nil {

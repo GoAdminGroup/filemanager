@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/GoAdminGroup/filemanager/models"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
@@ -44,5 +43,5 @@ func (h *Handler) Download(ctx *context.Context) {
 		ctx.AddHeader("content-disposition", `attachment; filename=`+filename)
 	}
 
-	fmt.Println("err", ctx.ServeFile(path, false))
+	_ = ctx.ServeFile(filepath.FromSlash(path), false)
 }

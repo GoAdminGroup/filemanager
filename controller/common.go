@@ -15,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
+	"github.com/GoAdminGroup/html"
 	template2 "html/template"
 	"net/url"
 	"path/filepath"
@@ -87,14 +88,13 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 			SetNoPadding().
 			WithHeadBorder().
 			GetContent(),
-		Title:       language.Get(h.roots.GetTitleFromPrefix(ctx)),
+		Title:       language.GetHTML(h.roots.GetTitleFromPrefix(ctx)),
 		Description: fixedDescription(relativePath),
 	}, false, true)
 }
 
-func fixedDescription(des string) string {
-	return des
-	//return string(html.SpanEl().SetAttr("title", des).SetContent(template2.HTML(des)).Get())
+func fixedDescription(des string) template2.HTML {
+	return html.SpanEl().SetAttr("title", des).SetContent(template2.HTML(des)).Get()
 }
 
 func (h *Handler) table(ctx *context.Context, files models.Files, err error) {
@@ -342,7 +342,7 @@ func (h *Handler) panel(ctx *context.Context, path string, err error, table type
 				Param:        parameter.GetParam(ctx.Request.URL, defaultPageSize),
 			}).GetContent()).
 			GetContent(),
-		Title:       language.Get(h.roots.GetTitleFromPrefix(ctx)),
+		Title:       language.GetHTML(h.roots.GetTitleFromPrefix(ctx)),
 		Description: fixedDescription(path),
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func (h *Handler) Rename(ctx *context.Context) {
@@ -20,7 +21,7 @@ func (h *Handler) Rename(ctx *context.Context) {
 		return
 	}
 
-	err := os.Rename(param.Src, param.Dist)
+	err := os.Rename(filepath.FromSlash(param.Src), filepath.FromSlash(param.Dist))
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
