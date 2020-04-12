@@ -31,4 +31,5 @@ var EN = language.LangSet{
 	"filemanager.rename success": "Rename Succeed",
 	"filemanager.no permission":  "No Permission",
 	"filemanager.no files":       "No Files",
+	"filemanager.no supported":   "No supported yet",
 }

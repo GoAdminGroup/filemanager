@@ -7,7 +7,6 @@ import (
 	language2 "github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
 	"github.com/GoAdminGroup/filemanager/modules/root"
-	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -15,10 +14,9 @@ import (
 )
 
 type FileManager struct {
-	app   *context.App
-	name  string
+	*plugins.Base
+
 	roots root.Roots
-	conn  db.Connection
 
 	handler *controller.Handler
 	guard   *guard.Guardian
@@ -31,9 +29,11 @@ type FileManager struct {
 	allowRename    bool
 }
 
+const Name = "filemanager"
+
 func NewFileManager(rootPath string) *FileManager {
 	return &FileManager{
-		name:           "filemanager",
+		Base:           &plugins.Base{PlugName: Name},
 		roots:          root.Roots{"def": rootPath},
 		allowUpload:    true,
 		allowCreateDir: true,
@@ -56,7 +56,7 @@ type Config struct {
 
 func NewFileManagerWithConfig(cfg Config) *FileManager {
 	return &FileManager{
-		name:           "filemanager",
+		Base:           &plugins.Base{PlugName: Name},
 		roots:          root.Roots{"def": cfg.Path},
 		allowUpload:    cfg.AllowUpload,
 		allowCreateDir: cfg.AllowCreateDir,
@@ -68,7 +68,11 @@ func NewFileManagerWithConfig(cfg Config) *FileManager {
 }
 
 func (f *FileManager) InitPlugin(srv service.List) {
-	f.conn = db.GetConnection(srv)
+
+	// DO NOT DELETE
+	f.InitBase(srv)
+
+	f.Conn = db.GetConnection(srv)
 	p := permission.Permission{
 		AllowUpload:    f.allowUpload,
 		AllowCreateDir: f.allowCreateDir,
@@ -77,9 +81,10 @@ func (f *FileManager) InitPlugin(srv service.List) {
 		AllowRename:    f.allowRename,
 		AllowDownload:  f.allowDownload,
 	}
-	f.handler = controller.NewHandler(f.roots, f.conn, p)
-	f.guard = guard.New(f.roots, f.conn, p)
-	f.app = f.initRouter(srv)
+	f.handler = controller.NewHandler(f.roots, p)
+	f.guard = guard.New(f.roots, f.Conn, p)
+	f.App = f.initRouter(srv)
+	f.handler.HTML = f.HTML
 
 	language.Lang[language.CN].Combine(language2.CN)
 	language.Lang[language.EN].Combine(language2.EN)
@@ -90,16 +95,4 @@ func (f *FileManager) InitPlugin(srv service.List) {
 func (f *FileManager) AddRoot(key, value string) *FileManager {
 	f.roots.Add(key, value)
 	return f
-}
-
-func (f *FileManager) GetRequest() []context.Path {
-	return f.app.Requests
-}
-
-func (f *FileManager) GetHandler() context.HandlerMap {
-	return plugins.GetHandler(f.app)
-}
-
-func (f *FileManager) Name() string {
-	return f.name
 }

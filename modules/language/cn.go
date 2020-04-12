@@ -32,4 +32,5 @@ var CN = language.LangSet{
 	"filemanager.rename success": "重命名成功",
 	"filemanager.no permission":  "没有权限",
 	"filemanager.no files":       "没有文件",
+	"filemanager.no supported":   "暂不支持该文件格式文件预览",
 }

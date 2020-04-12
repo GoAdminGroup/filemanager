@@ -1,6 +1,7 @@
 package previewer
 
 import (
+	"github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/html"
 	"github.com/h2non/filetype"
 	"html/template"
@@ -33,7 +34,7 @@ func Preview(path string) (template.HTML, error) {
 		SetStyle("margin", "20px auto 20px auto").
 		SetStyle("width", "500px").
 		SetStyle("text-align", "center").
-		SetContent(html.H1("no supported")).
+		SetContent(html.H1(language.GetHTML("no supported"))).
 		Get(), nil
 }
 

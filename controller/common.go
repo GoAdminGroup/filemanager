@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"github.com/GoAdminGroup/filemanager/models"
 	"github.com/GoAdminGroup/filemanager/modules/constant"
 	"github.com/GoAdminGroup/filemanager/modules/language"
@@ -9,10 +8,7 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/root"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -20,7 +16,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	template2 "html/template"
-	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
@@ -29,15 +24,14 @@ import (
 
 type Handler struct {
 	roots       root.Roots
-	conn        db.Connection
-	navButtons  types.Buttons
 	permissions permission.Permission
+
+	HTML func(ctx *context.Context, panel types.Panel, animation ...bool)
 }
 
-func NewHandler(root root.Roots, conn db.Connection, p permission.Permission) *Handler {
+func NewHandler(root root.Roots, p permission.Permission) *Handler {
 	return &Handler{
 		roots:       root,
-		conn:        conn,
 		permissions: p,
 	}
 }
@@ -48,10 +42,6 @@ func (h *Handler) Prefix(ctx *context.Context) string {
 		return "def"
 	}
 	return prefix
-}
-
-func (h *Handler) Execute(ctx *context.Context, panel types.Panel, animation ...bool) *bytes.Buffer {
-	return plugins.Execute(ctx, h.conn, h.navButtons, auth.Auth(ctx), panel, animation...)
 }
 
 func (h *Handler) preview(ctx *context.Context, content template2.HTML, relativePath, path string, err error) {
@@ -90,7 +80,7 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 		SetHideRowSelector(true).
 		SetButtons(btnHTML + btns.FooterContent())
 
-	buf := h.Execute(ctx, types.Panel{
+	h.HTML(ctx, types.Panel{
 		Content: alert + comp.Box().
 			SetBody(content).
 			SetHeader(table.GetDataTableHeader()).
@@ -100,7 +90,6 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 		Title:       language.Get("filemanager"),
 		Description: fixedDescription(relativePath),
 	}, false, true)
-	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func fixedDescription(des string) string {
@@ -109,8 +98,7 @@ func fixedDescription(des string) string {
 }
 
 func (h *Handler) table(ctx *context.Context, files models.Files, err error) {
-	buf := h.Execute(ctx, h.tablePanel(ctx, files, err), false)
-	ctx.HTML(http.StatusOK, buf.String())
+	h.HTML(ctx, h.tablePanel(ctx, files, err), false)
 }
 
 func link(u string, c template2.HTML, pjax bool) template2.HTML {
