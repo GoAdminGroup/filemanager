@@ -25,7 +25,12 @@ func main() {
 
 	e := engine.Default()
 
-	cfg := config.Config{
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	if err := e.AddConfig(config.Config{
 		Databases: config.DatabaseList{
 			"default": {
 				Driver: config.DriverSqlite,
@@ -44,14 +49,7 @@ func main() {
 		Animation: config.PageAnimation{
 			Type: "fadeInUp",
 		},
-	}
-
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
-	if err := e.AddConfig(cfg).
+	}).
 		AddPlugins(filemanager.
 			NewFileManager(dir+"/root1").
 			AddRoot("root2", root.Root{Path: dir + "/root2", Title: "root2"}).

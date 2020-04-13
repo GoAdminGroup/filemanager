@@ -8,12 +8,16 @@ github.com/GoAdminGroup/filemanager v0.0.0-20200413035633-22b491a688de h1:oSprtO
 github.com/GoAdminGroup/filemanager v0.0.0-20200413035633-22b491a688de/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200412164441-ecd28c80fccb h1:rh0LUbsIbj6ZIAzbblKzgXz/y47wp/TZnjFLY2tyXcQ=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200412164441-ecd28c80fccb/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
+github.com/GoAdminGroup/go-admin v1.2.8 h1:Hub/J6LnsUDJc3EEkK7RQX+RReE7cQTX7b8d3RlPl3Q=
+github.com/GoAdminGroup/go-admin v1.2.8/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
 github.com/GoAdminGroup/html v0.0.1 h1:SdWNWl4OKPsvDk2GDp5ZKD6ceWoN8n4Pj6cUYxavUd0=
 github.com/GoAdminGroup/html v0.0.1/go.mod h1:A1laTJaOx8sQ64p2dE8IqtstDeCNBHEazrEp7hR5VvM=
 github.com/GoAdminGroup/themes v0.0.30-0.20200412131615-60d8ce976795 h1:S1yhf3iarFODRBN6XqjW97HFmuqh8nFSA9krYH2unjY=
 github.com/GoAdminGroup/themes v0.0.30-0.20200412131615-60d8ce976795/go.mod h1:ABCOeBeibfg9DxAsGVa1NzYK9/nIbHT/BuFrCRIKo8A=
 github.com/GoAdminGroup/themes v0.0.30-0.20200413000940-c9ef15db4348 h1:svCyXLG0TJjUv6o9BV+fE3Vq4oEXHGvH/MWS9j4/x+o=
 github.com/GoAdminGroup/themes v0.0.30-0.20200413000940-c9ef15db4348/go.mod h1:ABCOeBeibfg9DxAsGVa1NzYK9/nIbHT/BuFrCRIKo8A=
+github.com/GoAdminGroup/themes v0.0.30 h1:rF/++U0o1vH9589uJ22H6OZw+WxuwB8vtSoti9KhdM4=
+github.com/GoAdminGroup/themes v0.0.30/go.mod h1:ABCOeBeibfg9DxAsGVa1NzYK9/nIbHT/BuFrCRIKo8A=
 github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e h1:n+DcnTNkQnHlwpsrHoQtkrJIO7CBx029fw6oR4vIob4=
 github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e/go.mod h1:Bdzq+51GR4/0DIhaICZEOm+OHvXGwwB2trKZ8B4Y6eQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
