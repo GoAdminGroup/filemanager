@@ -1,16 +1,18 @@
 package main
 
 import (
-	"github.com/GoAdminGroup/filemanager/modules/root"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
 	_ "github.com/GoAdminGroup/themes/sword"
 
 	"github.com/GoAdminGroup/filemanager"
+	"github.com/GoAdminGroup/filemanager/modules/root"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -20,8 +22,8 @@ import (
 func main() {
 	r := gin.Default()
 
-	//gin.SetMode(gin.ReleaseMode)
-	//gin.DefaultWriter = ioutil.Discard
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = ioutil.Discard
 
 	e := engine.Default()
 
@@ -53,9 +55,9 @@ func main() {
 
 	if err := e.AddConfig(cfg).
 		AddPlugins(filemanager.
-			NewFileManager(dir+"/root1").
-			AddRoot("root2", root.Root{Path: dir + "/root2", Title: "root2"}).
-			AddRoot("root3", root.Root{Path: dir + "/root3", Title: "root3"}),
+			NewFileManager(filepath.Join(dir, "root1")).
+			AddRoot("root2", root.Root{Path: filepath.Join(dir, "root2"), Title: "root2"}).
+			AddRoot("root3", root.Root{Path: filepath.Join(dir, "root3"), Title: "root3"}),
 		).
 		Use(r); err != nil {
 		panic(err)
