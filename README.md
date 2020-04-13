@@ -24,4 +24,5 @@ login and then visit: [http://localhost:9033/admin/fm/def/list](http://localhost
 - [ ] File encryption
 - [ ] Cloud deployment processes
 - [ ] Operation rbac permission check
+- [ ] Support oss/qiniu/..., make a local driver
 - [ ] CLI
