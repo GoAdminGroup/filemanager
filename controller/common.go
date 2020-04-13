@@ -59,7 +59,7 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 	if isSubDir {
 		dir := filepath.Dir(relativePath)
 		if dir != "." && dir != "/" {
-			lastDir = dir
+			lastDir = filepath.ToSlash(dir)
 		}
 	}
 
@@ -148,7 +148,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		dir := filepath.Dir(path)
 		if dir != "." && dir != "/" {
 			length++
-			lastDir = dir
+			lastDir = filepath.ToSlash(dir)
 		}
 	}
 	if path == "" {
@@ -187,7 +187,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 	for k, f := range files {
 		if f.Path[0] != '/' {
-			f.Path = "/" + f.Path
+			f.Path = filepath.ToSlash("/" + f.Path)
 		}
 
 		if f.IsDirectory {
