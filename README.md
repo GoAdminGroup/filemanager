@@ -21,4 +21,7 @@ login and then visit: [http://localhost:9033/admin/fm/def/list](http://localhost
 - [ ] Get permanent/temporary link
 - [ ] Add shortcuts
 - [ ] Check weather override
+- [ ] File encryption
+- [ ] Cloud deployment processes
+- [ ] Operation rbac permission check
 - [ ] CLI
