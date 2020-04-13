@@ -3,7 +3,7 @@ module github.com/GoAdminGroup/filemanager/example
 go 1.14
 
 require (
-	github.com/GoAdminGroup/filemanager v0.0.0-20200412234012-aa85b38c4745
+	github.com/GoAdminGroup/filemanager v0.0.0-20200413010222-678af33b1349
 	github.com/GoAdminGroup/go-admin v1.2.8-0.20200412164441-ecd28c80fccb
 	github.com/GoAdminGroup/themes v0.0.30-0.20200413000940-c9ef15db4348
 	github.com/gin-gonic/gin v1.6.2
