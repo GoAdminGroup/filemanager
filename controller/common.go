@@ -186,8 +186,9 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	}
 
 	for k, f := range files {
+		f.Path = filepath.ToSlash(f.Path)
 		if f.Path[0] != '/' {
-			f.Path = filepath.ToSlash("/" + f.Path)
+			f.Path = "/" + f.Path
 		}
 
 		if f.IsDirectory {
