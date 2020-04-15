@@ -2,7 +2,7 @@
 
 A GoAdmin plugin which help you build a file cloud disk.
 
-![](http://quick.go-admin.cn/docs/filemanager_interface.png)
+![](http://quick.go-admin.cn/docs/filemanager_interface_2.png)
 
 ## How To
 
