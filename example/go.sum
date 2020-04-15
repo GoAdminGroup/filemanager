@@ -6,6 +6,8 @@ github.com/GoAdminGroup/filemanager v0.0.0-20200413010222-678af33b1349 h1:nIhmlA
 github.com/GoAdminGroup/filemanager v0.0.0-20200413010222-678af33b1349/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
 github.com/GoAdminGroup/filemanager v0.0.0-20200413035633-22b491a688de h1:oSprtOqhkl6erhtMzH+y9usLd2ILN5DlMyzj54cjALA=
 github.com/GoAdminGroup/filemanager v0.0.0-20200413035633-22b491a688de/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
+github.com/GoAdminGroup/filemanager v0.0.1 h1:jKNApkERtcfU8AGQK35glVhilQoSBUVl0lZ96KSpI6E=
+github.com/GoAdminGroup/filemanager v0.0.1/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200412164441-ecd28c80fccb h1:rh0LUbsIbj6ZIAzbblKzgXz/y47wp/TZnjFLY2tyXcQ=
 github.com/GoAdminGroup/go-admin v1.2.8-0.20200412164441-ecd28c80fccb/go.mod h1:9Kk8rbrMUUiKQCRaAtdV1aHOTHaqzeyjChq9ykQ76Rg=
 github.com/GoAdminGroup/go-admin v1.2.8 h1:Hub/J6LnsUDJc3EEkK7RQX+RReE7cQTX7b8d3RlPl3Q=
