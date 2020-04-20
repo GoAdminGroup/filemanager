@@ -20,10 +20,10 @@ import (
 )
 
 func main() {
-	r := gin.Default()
-
 	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = ioutil.Discard
+
+	r := gin.Default()
 
 	e := engine.Default()
 
@@ -39,10 +39,11 @@ func main() {
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		Language: language.EN,
-		IndexUrl: "/fm/def/list",
-		Debug:    true,
-		Theme:    "sword",
+		Language:           language.EN,
+		IndexUrl:           "/fm/def/list",
+		Debug:              true,
+		AccessAssetsLogOff: true,
+		Theme:              "sword",
 		Animation: config.PageAnimation{
 			Type: "fadeInUp",
 		},
