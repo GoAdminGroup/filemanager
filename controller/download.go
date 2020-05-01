@@ -36,6 +36,17 @@ func (h *Handler) Download(ctx *context.Context) {
 	}
 
 	filename := filepath.Base(path)
+
+	agent := ctx.Request.Header.Get("User-Agent");
+	if strings.Contains(agent, "MSIE") {
+		filename = url.QueryEscape(filename)
+		filename = strings.Replace(filename, "+", "%20", -1)
+	}
+	if strings.Contains(agent, "Edge") && strings.Contains(agent, "Gecko") {
+		filename = url.QueryEscape(filename)
+		filename = strings.Replace(filename, "+", "%20", -1)
+	}
+
 	contentType := util.ParseFileContentType(filename)
 	ctx.SetContentType(contentType)
 
