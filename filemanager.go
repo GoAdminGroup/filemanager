@@ -7,6 +7,7 @@ import (
 	language2 "github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
 	"github.com/GoAdminGroup/filemanager/modules/root"
+	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -54,20 +55,24 @@ func NewFileManager(rootPath string, titles ...string) *FileManager {
 }
 
 type Config struct {
-	AllowUpload    bool
-	AllowCreateDir bool
-	AllowDelete    bool
-	AllowMove      bool
-	AllowDownload  bool
-	AllowRename    bool
-	Path           string
-	Title          string
+	AllowUpload    bool   `json:"allow_upload",yaml:"allow_upload",ini:"allow_upload"`
+	AllowCreateDir bool   `json:"allow_create_dir",yaml:"allow_create_dir",ini:"allow_create_dir"`
+	AllowDelete    bool   `json:"allow_delete",yaml:"allow_delete",ini:"allow_delete"`
+	AllowMove      bool   `json:"allow_move",yaml:"allow_move",ini:"allow_move"`
+	AllowDownload  bool   `json:"allow_download",yaml:"allow_download",ini:"allow_download"`
+	AllowRename    bool   `json:"allow_rename",yaml:"allow_rename",ini:"allow_rename"`
+	Path           string `json:"path",yaml:"path",ini:"path"`
+	Title          string `json:"title",yaml:"title",ini:"title"`
 }
 
 func NewFileManagerWithConfig(cfg Config) *FileManager {
 
 	if cfg.Path == "" {
 		panic("filemanager: create fail, wrong path")
+	}
+
+	if !util.FileExist(cfg.Path) {
+		panic("filemanager: wrong directory path")
 	}
 
 	if cfg.Title == "" {
