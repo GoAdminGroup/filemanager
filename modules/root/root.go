@@ -26,8 +26,16 @@ func (r Roots) GetTitleFromPrefix(ctx *context.Context) string {
 
 func (r Roots) GetFromPrefix(ctx *context.Context) Root {
 	prefix := ctx.Query("__prefix")
+	if prefix == "" {
+		prefix = "def"
+	}
 	if root, ok := r[prefix]; ok {
 		return root
+	}
+	for name, v := range r {
+		if name != "" {
+			return v
+		}
 	}
 	panic(errors.WrongPrefix)
 }

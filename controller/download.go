@@ -37,7 +37,7 @@ func (h *Handler) Download(ctx *context.Context) {
 
 	filename := filepath.Base(path)
 
-	agent := ctx.Request.Header.Get("User-Agent");
+	agent := ctx.Request.Header.Get("User-Agent")
 	if strings.Contains(agent, "MSIE") {
 		filename = url.QueryEscape(filename)
 		filename = strings.Replace(filename, "+", "%20", -1)

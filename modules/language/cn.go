@@ -8,6 +8,9 @@ var CN = language.LangSet{
 	"filemanager.is not a file": "不是文件",
 	"filemanager.filemanager":   "文件管理器",
 
+	"filemanager.a plugin help you manage files in your server": "文件管理插件，帮助您管理服务器文件。",
+	"filemanager.official": "GoAdmin官方",
+
 	"filemanager.filename":         "名称",
 	"filemanager.size":             "大小",
 	"filemanager.last modify time": "最后修改时间",
@@ -33,4 +36,27 @@ var CN = language.LangSet{
 	"filemanager.no permission":  "没有权限",
 	"filemanager.no files":       "没有文件",
 	"filemanager.no supported":   "暂不支持该文件格式文件预览",
+
+	"filemanager.title": "标题",
+	"filemanager.name":  "标志",
+	"filemanager.path":  "路径",
+	"filemanager.roots": "监听文件夹路径",
+
+	"filemanager.allow upload":    "允许上传",
+	"filemanager.allow createdir": "允许创建文件夹",
+	"filemanager.allow delete":    "允许删除",
+	"filemanager.allow move":      "允许移动",
+	"filemanager.allow rename":    "允许重命名",
+	"filemanager.allow download":  "允许下载",
+
+	"filemanager.connection": "连接",
+
+	"filemanager.yes": "是",
+	"filemanager.no":  "否",
+
+	"filemanager.install":         "安装",
+	"filemanager.install success": "安装成功",
+	"filemanager.install fail":    "安装失败",
+
+	"filemanager.filemanager installation": "安装 FileManager",
 }

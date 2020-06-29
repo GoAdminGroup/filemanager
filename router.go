@@ -13,7 +13,7 @@ func (f *FileManager) initRouter(srv service.List) *context.App {
 	route := app.Group(config.GetUrlPrefix())
 	authRoute := route.Group("/", auth.Middleware(f.Conn))
 
-	authRoute.GET("/fm/:__prefix/list", f.guard.Files, f.handler.ListFiles)
+	authRoute.GET("/fm", f.guard.Files, f.handler.ListFiles)
 	authRoute.GET("/fm/:__prefix/download", f.handler.Download)
 	authRoute.POST("/fm/:__prefix/upload", f.guard.Upload, f.handler.Upload)
 	authRoute.POST("/fm/:__prefix/create/dir/popup", f.handler.CreateDirPopUp)

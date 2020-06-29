@@ -1,6 +1,7 @@
 package filemanager
 
 import (
+	"encoding/json"
 	"github.com/GoAdminGroup/filemanager/controller"
 	"github.com/GoAdminGroup/filemanager/guard"
 	"github.com/GoAdminGroup/filemanager/modules/error"
@@ -8,10 +9,20 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/permission"
 	"github.com/GoAdminGroup/filemanager/modules/root"
 	"github.com/GoAdminGroup/filemanager/modules/util"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"strings"
+	"time"
 )
 
 type FileManager struct {
@@ -30,7 +41,15 @@ type FileManager struct {
 	allowRename    bool
 }
 
-const Name = "filemanager"
+func init() {
+	plugins.Add(&FileManager{Base: &plugins.Base{PlugName: Name}})
+}
+
+const (
+	Name          = "filemanager"
+	TableName     = "filemanager_setting"
+	ConnectionKey = "filemanager_connection"
+)
 
 func NewFileManager(rootPath string, titles ...string) *FileManager {
 
@@ -91,12 +110,51 @@ func NewFileManagerWithConfig(cfg Config) *FileManager {
 	}
 }
 
+func (f *FileManager) IsInstalled() bool {
+	return len(f.roots) != 0
+}
+
 func (f *FileManager) InitPlugin(srv service.List) {
 
 	// DO NOT DELETE
 	f.InitBase(srv)
 
 	f.Conn = db.GetConnection(srv)
+
+	if len(f.roots) == 0 {
+		checkExist, _ := db.WithDriver(f.Conn).
+			Table("goadmin_site").
+			Where("key", "=", ConnectionKey).
+			First()
+		if checkExist != nil {
+			connName := checkExist["value"].(string)
+			records, err := db.WithDriverAndConnection(connName, f.Conn).Table(TableName).All()
+			if !db.CheckError(err, db.INSERT) && len(records) > 0 {
+				for _, record := range records {
+					switch record["key"].(string) {
+					case "roots":
+						err = json.Unmarshal([]byte(record["value"].(string)), &f.roots)
+						if err != nil {
+							continue
+						}
+					case "allowUpload":
+						f.allowUpload = record["value"].(string) == "1"
+					case "allowCreateDir":
+						f.allowCreateDir = record["value"].(string) == "1"
+					case "allowDelete":
+						f.allowDelete = record["value"].(string) == "1"
+					case "allowMove":
+						f.allowMove = record["value"].(string) == "1"
+					case "allowRename":
+						f.allowRename = record["value"].(string) == "1"
+					case "allowDownload":
+						f.allowDownload = record["value"].(string) == "1"
+					}
+				}
+			}
+		}
+	}
+
 	p := permission.Permission{
 		AllowUpload:    f.allowUpload,
 		AllowCreateDir: f.allowCreateDir,
@@ -114,6 +172,214 @@ func (f *FileManager) InitPlugin(srv service.List) {
 	language.Lang[language.EN].Combine(language2.EN)
 
 	errors.Init()
+}
+
+func (f *FileManager) GetInfo() plugins.Info {
+	return plugins.Info{
+		Website:     "https://www.go-admin.cn",
+		Title:       "FileManager",
+		Description: "A plugin help you manage files in your server",
+		Version:     "v0.0.1",
+		Author:      "Official",
+		Url:         "https://github.com/GoAdminGroup/filemanager/archive/master.zip",
+		Cover:       "",
+		Agreement:   "",
+		CreatedAt:   utils.ParseTime("2020-04-05 00:00:00"),
+		UpdatedAt:   utils.ParseTime("2020-06-28 00:00:00"),
+	}
+}
+
+type Table struct {
+	Id        int64
+	Key       string    `xorm:"VARCHAR(100) 'key'"`
+	Value     string    `xorm:"TEXT 'value'"`
+	CreatedAt time.Time `xorm:"'created_at' timestamp NULL DEFAULT CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `xorm:"'updated_at' timestamp NULL DEFAULT CURRENT_TIMESTAMP"`
+}
+
+func (*Table) TableName() string {
+	return TableName
+}
+
+func (f *FileManager) GetInstallationPage() (bool, table.Generator) {
+	return false, func(ctx *context.Context) (fileManagerConfiguration table.Table) {
+		fileManagerConfiguration = table.NewDefaultTable(table.DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
+			SetOnlyNewForm())
+
+		formList := fileManagerConfiguration.GetForm().AddXssJsFilter().
+			HideBackButton().
+			HideContinueNewCheckBox().
+			HideResetButton()
+
+		connNames := config.GetDatabases().Connections()
+		ops := make(types.FieldOptions, len(connNames))
+		for i, name := range connNames {
+			ops[i] = types.FieldOption{Text: name, Value: name}
+		}
+
+		formList.AddField(language2.Get("Connection"), "conn", db.Varchar, form.SelectSingle).
+			FieldOptions(ops)
+
+		formList.AddRow(func(panel *types.FormPanel) {
+			panel.AddField(language2.Get("allow upload"), "allowUpload", db.Int, form.Switch).FieldOptions(types.FieldOptions{
+				{Value: "1", Text: language2.Get("yes")},
+				{Value: "0", Text: language2.Get("no")},
+			}).FieldDefault("1").FieldRowWidth(3)
+			panel.AddField(language2.Get("allow createdir"), "allowCreateDir", db.Int, form.Switch).FieldOptions(types.FieldOptions{
+				{Value: "1", Text: language2.Get("yes")},
+				{Value: "0", Text: language2.Get("no")},
+			}).FieldDefault("1").FieldRowWidth(4).FieldHeadWidth(4)
+		})
+
+		formList.AddRow(func(panel *types.FormPanel) {
+			panel.AddField(language2.Get("allow delete"), "allowDelete", db.Int, form.Switch).FieldOptions(types.FieldOptions{
+				{Value: "1", Text: language2.Get("yes")},
+				{Value: "0", Text: language2.Get("no")},
+			}).FieldDefault("1").FieldRowWidth(3)
+			panel.AddField(language2.Get("allow move"), "allowMove", db.Int, form.Switch).FieldOptions(types.FieldOptions{
+				{Value: "1", Text: language2.Get("yes")},
+				{Value: "0", Text: language2.Get("no")},
+			}).FieldDefault("1").FieldRowWidth(4).FieldHeadWidth(4)
+		})
+
+		formList.AddRow(func(panel *types.FormPanel) {
+			panel.AddField(language2.Get("allow rename"), "allowRename", db.Int, form.Switch).FieldOptions(types.FieldOptions{
+				{Value: "1", Text: language2.Get("yes")},
+				{Value: "0", Text: language2.Get("no")},
+			}).FieldDefault("1").FieldRowWidth(3)
+			panel.AddField(language2.Get("allow download"), "allowDownload", db.Int, form.Switch).FieldOptions(types.FieldOptions{
+				{Value: "1", Text: language2.Get("yes")},
+				{Value: "0", Text: language2.Get("no")},
+			}).FieldDefault("1").FieldRowWidth(4).FieldHeadWidth(4)
+		})
+
+		formList.AddTable(language2.Get("roots"), "roots", func(panel *types.FormPanel) {
+			panel.AddField(language2.Get("name"), "name", db.Varchar, form.Text).FieldHideLabel().
+				FieldDisplay(func(value types.FieldModel) interface{} {
+					return []string{""}
+				})
+			panel.AddField(language2.Get("title"), "title", db.Varchar, form.Text).FieldHideLabel().
+				FieldDisplay(func(value types.FieldModel) interface{} {
+					return []string{""}
+				})
+			panel.AddField(language2.Get("path"), "path", db.Varchar, form.Text).FieldHideLabel().
+				FieldDisplay(func(value types.FieldModel) interface{} {
+					return []string{""}
+				})
+		})
+
+		formList.SetInsertFn(func(values form2.Values) error {
+			connName := values.Get("conn")
+			if connName == "" {
+				return errors.EmptyConnectionName
+			}
+			tables, err := db.WithDriver(f.Conn).Table(f.Conn.GetConfig(connName).Name).ShowTables()
+			if err != nil {
+				return err
+			}
+			var rootsMap = make(root.Roots, len(values["name"]))
+			for k, name := range values["name"] {
+				rootsMap[name] = root.Root{
+					Path:  values["path"][k],
+					Title: values["title"][k],
+				}
+			}
+			roots, _ := json.Marshal(rootsMap)
+			if !utils.InArray(tables, TableName) {
+				err = f.Conn.CreateDB(connName, new(Table))
+				if err != nil {
+					return err
+				}
+				_, err = db.WithDriverAndConnection(connName, f.Conn).
+					Table(TableName).
+					Insert(dialect.H{
+						"key":   "roots",
+						"value": roots,
+					})
+				if db.CheckError(err, db.INSERT) {
+					return err
+				}
+				for key, value := range values {
+					if key != "name" && key != "path" && key != "roots" {
+						_, _ = db.WithDriverAndConnection(connName, f.Conn).
+							Table(TableName).
+							Insert(dialect.H{
+								"key":   key,
+								"value": value[0],
+							})
+					}
+				}
+			} else {
+				_, err = db.WithDriverAndConnection(connName, f.Conn).
+					Table(TableName).
+					Where("key", "=", "roots").
+					Update(dialect.H{
+						"value": roots,
+					})
+				if db.CheckError(err, db.UPDATE) {
+					return err
+				}
+
+				values = values.RemoveSysRemark()
+				for key, value := range values {
+					if key != "name" && key != "path" && key != "roots" && !strings.Contains(key, "__checkbox__") {
+						_, _ = db.WithDriverAndConnection(connName, f.Conn).
+							Table(TableName).
+							Where("key", "=", key).
+							Update(dialect.H{
+								"value": value[0],
+							})
+					}
+				}
+			}
+
+			checkExist, _ := db.WithDriver(f.Conn).
+				Table("goadmin_site").
+				Where("key", "=", ConnectionKey).
+				First()
+
+			if checkExist != nil {
+				_, _ = db.WithDriver(f.Conn).
+					Table("goadmin_site").
+					Where("key", "=", ConnectionKey).
+					Update(dialect.H{
+						"value": connName,
+					})
+			} else {
+				_, _ = db.WithDriver(f.Conn).
+					Table("goadmin_site").
+					Insert(dialect.H{
+						"key":   ConnectionKey,
+						"value": connName,
+					})
+			}
+
+			p := permission.Permission{
+				AllowUpload:    values.Get("allowUpload") == "1",
+				AllowCreateDir: values.Get("allowCreateDir") == "1",
+				AllowDelete:    values.Get("allowDelete") == "1",
+				AllowMove:      values.Get("allowMove") == "1",
+				AllowRename:    values.Get("allowRename") == "1",
+				AllowDownload:  values.Get("allowDownload") == "1",
+			}
+
+			f.roots = rootsMap
+			f.handler.Update(f.roots, p)
+			f.guard.Update(f.roots, p)
+
+			return nil
+		})
+
+		formList.EnableAjaxData(types.AjaxData{
+			SuccessTitle:   language2.Get("install success"),
+			ErrorTitle:     language2.Get("install fail"),
+			SuccessJumpURL: config.Prefix() + "/fm",
+		}).SetFormNewTitle(language2.GetHTML("filemanager installation")).
+			SetTitle(language2.Get("filemanager installation")).
+			SetFormNewBtnWord(language2.GetHTML("install"))
+
+		return
+	}
 }
 
 func (f *FileManager) AddRoot(key string, value root.Root) *FileManager {

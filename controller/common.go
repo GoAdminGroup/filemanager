@@ -37,6 +37,11 @@ func NewHandler(root root.Roots, p permission.Permission) *Handler {
 	}
 }
 
+func (h *Handler) Update(root root.Roots, p permission.Permission) {
+	h.roots = root
+	h.permissions = p
+}
+
 func (h *Handler) Prefix(ctx *context.Context) string {
 	prefix := ctx.Query(constant.PrefixKey)
 	if prefix == "" {

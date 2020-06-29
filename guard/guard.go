@@ -27,6 +27,11 @@ func New(r root.Roots, c db.Connection, p permission.Permission) *Guardian {
 	}
 }
 
+func (g *Guardian) Update(r root.Roots, p permission.Permission) {
+	g.roots = r
+	g.permissions = p
+}
+
 const (
 	filesParamKey     = "files_param"
 	uploadParamKey    = "upload_param"
@@ -46,7 +51,13 @@ type Base struct {
 func (g *Guardian) GetPrefix(ctx *context.Context) string {
 	prefix := ctx.Query(constant.PrefixKey)
 	if prefix == "" {
-		return "def"
+		if _, ok := g.roots["def"]; ok {
+			return "def"
+		} else {
+			for name := range g.roots {
+				return name
+			}
+		}
 	}
 	return prefix
 }

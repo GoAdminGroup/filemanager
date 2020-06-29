@@ -6,13 +6,14 @@ import (
 )
 
 var (
-	DirIsNotExist error
-	WrongPrefix   error
-	IsNotDir      error
-	IsNotFile     error
-	EmptyName     error
-	NoFile        error
-	NoPermission  error
+	DirIsNotExist       error
+	WrongPrefix         error
+	IsNotDir            error
+	IsNotFile           error
+	EmptyName           error
+	NoFile              error
+	NoPermission        error
+	EmptyConnectionName error
 )
 
 func Init() {
@@ -23,4 +24,5 @@ func Init() {
 	NoFile = errors.New(language.Get("no files"))
 	NoPermission = errors.New(language.Get("no permission"))
 	WrongPrefix = errors.New(language.Get("wrong prefix"))
+	EmptyConnectionName = errors.New(language.Get("empty connection name"))
 }
