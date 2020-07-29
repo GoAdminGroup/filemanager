@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"net/url"
+	"path/filepath"
+	"strings"
+
 	"github.com/GoAdminGroup/filemanager/models"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
-	"net/url"
-	"path/filepath"
-	"strings"
 )
 
 func (h *Handler) Download(ctx *context.Context) {

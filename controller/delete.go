@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"github.com/GoAdminGroup/filemanager/guard"
-	"github.com/GoAdminGroup/go-admin/context"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/GoAdminGroup/filemanager/guard"
+	"github.com/GoAdminGroup/go-admin/context"
 )
 
 func (h *Handler) Delete(ctx *context.Context) {

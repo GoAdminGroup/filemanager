@@ -2,13 +2,14 @@ package util
 
 import (
 	"fmt"
-	"golang.org/x/tools/godoc/util"
 	"io"
 	"mime"
 	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/tools/godoc/util"
 )
 
 func FileExist(path string) bool {

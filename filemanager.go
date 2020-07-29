@@ -2,9 +2,12 @@ package filemanager
 
 import (
 	"encoding/json"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/filemanager/controller"
 	"github.com/GoAdminGroup/filemanager/guard"
-	"github.com/GoAdminGroup/filemanager/modules/error"
+	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	language2 "github.com/GoAdminGroup/filemanager/modules/language"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
 	"github.com/GoAdminGroup/filemanager/modules/root"
@@ -21,8 +24,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	"strings"
-	"time"
 )
 
 type FileManager struct {
@@ -167,6 +168,7 @@ func (f *FileManager) InitPlugin(srv service.List) {
 	f.guard = guard.New(f.roots, f.Conn, p)
 	f.App = f.initRouter(srv)
 	f.handler.HTML = f.HTML
+	f.handler.HTMLMenu = f.HTMLMenu
 
 	language.Lang[language.CN].Combine(language2.CN)
 	language.Lang[language.EN].Combine(language2.EN)
@@ -179,13 +181,13 @@ func (f *FileManager) GetInfo() plugins.Info {
 		Website:     "https://www.go-admin.cn",
 		Title:       "FileManager",
 		Description: "A plugin help you manage files in your server",
-		Version:     "v0.0.1",
+		Version:     "v0.0.3",
 		Author:      "Official",
-		Url:         "https://github.com/GoAdminGroup/filemanager/archive/master.zip",
+		Url:         "https://github.com/GoAdminGroup/filemanager/archive/v0.0.3.zip",
 		Cover:       "",
 		Agreement:   "",
-		CreatedAt:   utils.ParseTime("2020-04-05 00:00:00"),
-		UpdatedAt:   utils.ParseTime("2020-06-28 00:00:00"),
+		CreateDate:  utils.ParseTime("2020-04-05"),
+		UpdateDate:  utils.ParseTime("2020-07-29"),
 	}
 }
 

@@ -1,13 +1,14 @@
 package guard
 
 import (
+	"mime/multipart"
+	"path/filepath"
+	"strings"
+
 	"github.com/GoAdminGroup/filemanager/modules/constant"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
-	"mime/multipart"
-	"path/filepath"
-	"strings"
 )
 
 type UploadParam struct {

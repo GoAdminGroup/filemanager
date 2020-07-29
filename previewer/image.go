@@ -2,10 +2,11 @@ package previewer
 
 import (
 	"encoding/base64"
+	"html/template"
+
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/html"
 	"github.com/h2non/filetype"
-	"html/template"
 )
 
 type Image struct{}

@@ -1,7 +1,7 @@
 package root
 
 import (
-	"github.com/GoAdminGroup/filemanager/modules/error"
+	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/go-admin/context"
 )
 

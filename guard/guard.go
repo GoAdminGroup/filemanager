@@ -1,6 +1,10 @@
 package guard
 
 import (
+	"net/url"
+	"path/filepath"
+	"strings"
+
 	"github.com/GoAdminGroup/filemanager/modules/constant"
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/permission"
@@ -8,9 +12,6 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"net/url"
-	"path/filepath"
-	"strings"
 )
 
 type Guardian struct {

@@ -1,14 +1,15 @@
 package controller
 
 import (
-	"github.com/GoAdminGroup/filemanager/guard"
-	"github.com/GoAdminGroup/filemanager/models"
-	"github.com/GoAdminGroup/filemanager/modules/util"
-	"github.com/GoAdminGroup/go-admin/context"
 	"io/ioutil"
 	"mime"
 	"path/filepath"
 	"strings"
+
+	"github.com/GoAdminGroup/filemanager/guard"
+	"github.com/GoAdminGroup/filemanager/models"
+	"github.com/GoAdminGroup/filemanager/modules/util"
+	"github.com/GoAdminGroup/go-admin/context"
 )
 
 func (h *Handler) ListFiles(ctx *context.Context) {
@@ -49,6 +50,6 @@ func (h *Handler) ListFiles(ctx *context.Context) {
 		filesOfDir = append(filesOfDir, file)
 	}
 
-	h.table(ctx, filesOfDir, nil)
+	h.tableMenu(ctx, filesOfDir, nil)
 	return
 }

@@ -1,11 +1,12 @@
 package guard
 
 import (
+	"path/filepath"
+	"strings"
+
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
-	"path/filepath"
-	"strings"
 )
 
 type DeleteParam struct {

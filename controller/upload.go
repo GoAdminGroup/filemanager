@@ -1,14 +1,15 @@
 package controller
 
 import (
-	"github.com/GoAdminGroup/filemanager/guard"
-	"github.com/GoAdminGroup/filemanager/modules/language"
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/file"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+
+	"github.com/GoAdminGroup/filemanager/guard"
+	"github.com/GoAdminGroup/filemanager/modules/language"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/file"
 )
 
 func (h *Handler) Upload(ctx *context.Context) {

@@ -1,15 +1,16 @@
 package controller
 
 import (
-	"github.com/GoAdminGroup/filemanager/guard"
-	"github.com/GoAdminGroup/filemanager/modules/language"
-	"github.com/GoAdminGroup/filemanager/modules/util"
-	"github.com/GoAdminGroup/go-admin/context"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+
+	"github.com/GoAdminGroup/filemanager/guard"
+	"github.com/GoAdminGroup/filemanager/modules/language"
+	"github.com/GoAdminGroup/filemanager/modules/util"
+	"github.com/GoAdminGroup/go-admin/context"
 )
 
 func (h *Handler) Move(ctx *context.Context) {

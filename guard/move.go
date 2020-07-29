@@ -1,10 +1,11 @@
 package guard
 
 import (
+	"path/filepath"
+
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
-	"path/filepath"
 )
 
 type MoveParam struct {

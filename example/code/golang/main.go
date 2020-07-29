@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/GoAdminGroup/filemanager/modules/root"
 	"log"
 	"os"
 	"os/signal"
+
+	"github.com/GoAdminGroup/filemanager/modules/root"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"

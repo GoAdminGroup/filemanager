@@ -1,8 +1,9 @@
 package previewer
 
 import (
-	"github.com/GoAdminGroup/html"
 	"html/template"
+
+	"github.com/GoAdminGroup/html"
 )
 
 type Code struct {

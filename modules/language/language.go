@@ -1,8 +1,9 @@
 package language
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"html/template"
+
+	"github.com/GoAdminGroup/go-admin/modules/language"
 )
 
 func Get(key string) string {

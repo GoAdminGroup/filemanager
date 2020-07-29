@@ -1,6 +1,9 @@
 package tests
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/GoAdminGroup/demo/tables"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/tests"
@@ -8,8 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/tests/frameworks/gin"
 	"github.com/GoAdminGroup/go-admin/tests/web"
 	"github.com/gavv/httpexpect"
-	"net/http"
-	"testing"
 )
 
 // Black box testing

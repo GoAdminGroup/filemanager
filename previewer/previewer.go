@@ -1,12 +1,13 @@
 package previewer
 
 import (
-	"github.com/GoAdminGroup/filemanager/modules/language"
-	"github.com/GoAdminGroup/html"
-	"github.com/h2non/filetype"
 	"html/template"
 	"io/ioutil"
 	"path/filepath"
+
+	"github.com/GoAdminGroup/filemanager/modules/language"
+	"github.com/GoAdminGroup/html"
+	"github.com/h2non/filetype"
 )
 
 type Previewer interface {
