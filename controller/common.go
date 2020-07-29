@@ -15,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -30,8 +29,7 @@ type Handler struct {
 	roots       root.Roots
 	permissions permission.Permission
 
-	HTML     func(ctx *context.Context, panel types.Panel, options ...plugins.HTMLOptions)
-	HTMLMenu func(ctx *context.Context, panel types.Panel, options ...plugins.HTMLOptions)
+	HTML func(ctx *context.Context, panel types.Panel, options ...plugins.HTMLOptions)
 }
 
 func NewHandler(root root.Roots, p permission.Permission) *Handler {
@@ -99,7 +97,10 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 			GetContent(),
 		Title:       language.GetHTML(h.roots.GetTitleFromPrefix(ctx)),
 		Description: fixedDescription(relativePath),
-	}, false, true)
+	}, plugins.HTMLOptions{
+		Animation:  false,
+		NoCompress: true,
+	})
 }
 
 func fixedDescription(des string) template2.HTML {
@@ -107,11 +108,7 @@ func fixedDescription(des string) template2.HTML {
 }
 
 func (h *Handler) table(ctx *context.Context, files models.Files, err error) {
-	h.HTML(ctx, h.tablePanel(ctx, files, err), false)
-}
-
-func (h *Handler) tableMenu(ctx *context.Context, menu *menu.Menu, files models.Files, err error) {
-	h.HTMLMenu(ctx, h.tablePanel(ctx, files, err), menu, false)
+	h.HTML(ctx, h.tablePanel(ctx, files, err))
 }
 
 func link(u string, c template2.HTML, pjax bool) template2.HTML {

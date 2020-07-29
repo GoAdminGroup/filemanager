@@ -50,6 +50,6 @@ func (h *Handler) ListFiles(ctx *context.Context) {
 		filesOfDir = append(filesOfDir, file)
 	}
 
-	h.tableMenu(ctx, filesOfDir, nil)
+	h.table(ctx, filesOfDir, nil)
 	return
 }

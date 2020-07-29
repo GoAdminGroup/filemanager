@@ -115,10 +115,14 @@ func (f *FileManager) IsInstalled() bool {
 	return len(f.roots) != 0
 }
 
+func (f *FileManager) GetIndexURL() string {
+	return config.Url("/fm")
+}
+
 func (f *FileManager) InitPlugin(srv service.List) {
 
 	// DO NOT DELETE
-	f.InitBase(srv)
+	f.InitBase(srv, "fm")
 
 	f.Conn = db.GetConnection(srv)
 
@@ -167,28 +171,30 @@ func (f *FileManager) InitPlugin(srv service.List) {
 	f.handler = controller.NewHandler(f.roots, p)
 	f.guard = guard.New(f.roots, f.Conn, p)
 	f.App = f.initRouter(srv)
-	f.handler.HTML = f.HTML
-	f.handler.HTMLMenu = f.HTMLMenu
+	f.handler.HTML = f.HTMLMenu
 
 	language.Lang[language.CN].Combine(language2.CN)
 	language.Lang[language.EN].Combine(language2.EN)
 
 	errors.Init()
+
+	f.SetInfo(info)
 }
 
-func (f *FileManager) GetInfo() plugins.Info {
-	return plugins.Info{
-		Website:     "https://www.go-admin.cn",
-		Title:       "FileManager",
-		Description: "A plugin help you manage files in your server",
-		Version:     "v0.0.3",
-		Author:      "Official",
-		Url:         "https://github.com/GoAdminGroup/filemanager/archive/v0.0.3.zip",
-		Cover:       "",
-		Agreement:   "",
-		CreateDate:  utils.ParseTime("2020-04-05"),
-		UpdateDate:  utils.ParseTime("2020-07-29"),
-	}
+var info = plugins.Info{
+	Website:     "https://www.go-admin.cn",
+	Title:       "FileManager",
+	Description: "A plugin help you manage files in your server",
+	Version:     "v0.0.4",
+	Author:      "Official",
+	Url:         "https://github.com/GoAdminGroup/filemanager/archive/v0.0.4.zip",
+	Cover:       "",
+	Agreement:   "",
+	Uuid:        "DDN7VxZDTHTeaF8HUU",
+	Name:        "filemanager",
+	ModulePath:  "github.com/GoAdminGroup/filemanager",
+	CreateDate:  utils.ParseTime("2020-04-05"),
+	UpdateDate:  utils.ParseTime("2020-07-29"),
 }
 
 type Table struct {
