@@ -53,9 +53,13 @@ var EN = language.LangSet{
 	"filemanager.yes": "Yes",
 	"filemanager.no":  "No",
 
-	"filemanager.install":         "Installation",
-	"filemanager.install success": "Install Success",
-	"filemanager.install fail":    "Install Fail",
+	"filemanager.install":             "Installation",
+	"filemanager.install success":     "Install Success",
+	"filemanager.install fail":        "Install Fail",
+	"filemanager.update":              "Update",
+	"filemanager.update success":      "Update Success",
+	"filemanager.update fail":         "Update Fail ",
+	"filemanager.filemanager setting": "FileManager Setting",
 
 	"filemanager.filemanager installation": "FileManager Installation",
 }

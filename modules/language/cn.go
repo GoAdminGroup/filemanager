@@ -54,9 +54,13 @@ var CN = language.LangSet{
 	"filemanager.yes": "是",
 	"filemanager.no":  "否",
 
-	"filemanager.install":         "安装",
-	"filemanager.install success": "安装成功",
-	"filemanager.install fail":    "安装失败",
+	"filemanager.install":             "安装",
+	"filemanager.install success":     "安装成功",
+	"filemanager.install fail":        "安装失败",
+	"filemanager.update":              "更新",
+	"filemanager.update success":      "更新成功",
+	"filemanager.update fail":         "更新失败",
+	"filemanager.filemanager setting": "文件管理器设置",
 
-	"filemanager.filemanager installation": "安装 FileManager",
+	"filemanager.filemanager installation": "安装文件管理器",
 }

@@ -2,12 +2,14 @@ package filemanager
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/icon"
-	"strings"
 
 	errors "github.com/GoAdminGroup/filemanager/modules/error"
 	language2 "github.com/GoAdminGroup/filemanager/modules/language"
@@ -27,10 +29,63 @@ func (f *FileManager) GetSettingPage() table.Generator {
 
 		cfg := table.DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver)
 
+		message1 := "install"
+		message2 := "installation"
+
 		if !f.IsInstalled() {
 			cfg = cfg.SetOnlyNewForm()
 		} else {
-			cfg = cfg.SetOnlyUpdateForm()
+
+			message1 = "update"
+			message2 = "setting"
+
+			cfg = cfg.SetOnlyUpdateForm().SetGetDataFun(func(params parameter.Parameters) ([]map[string]interface{}, int) {
+
+				var m = make([]map[string]interface{}, 1)
+
+				item, err := db.WithDriver(f.Conn).
+					Table("goadmin_site").
+					Where("key", "=", ConnectionKey).
+					First()
+
+				if db.CheckError(err, db.QUERY) {
+					return m, 1
+				}
+
+				items, err := db.WithDriverAndConnection(item["value"].(string), f.Conn).Table(TableName).All()
+				if db.CheckError(err, db.QUERY) {
+					return m, 1
+				}
+
+				m[0] = make(map[string]interface{})
+				names, titles, paths := make([]string, 0), make([]string, 0), make([]string, 0)
+				for _, item := range items {
+					if item["key"].(string) == "roots" {
+						rootsMap := make(root.Roots)
+						_ = json.Unmarshal([]byte(item["value"].(string)), &rootsMap)
+						for name, value := range rootsMap {
+							names = append(names, name)
+							titles = append(titles, value.Title)
+							paths = append(paths, value.Path)
+						}
+					} else {
+						if item["value"] == "1" {
+							m[0][item["key"].(string)] = 1
+						} else if item["value"] == "0" {
+							m[0][item["key"].(string)] = 0
+						} else {
+							m[0][item["key"].(string)] = item["value"]
+						}
+					}
+				}
+
+				m[0]["id"] = "1"
+				m[0]["name"] = strings.Join(names, ",")
+				m[0]["title"] = strings.Join(titles, ",")
+				m[0]["path"] = strings.Join(paths, ",")
+
+				return m, 1
+			})
 		}
 
 		fileManagerConfiguration = table.NewDefaultTable(cfg)
@@ -86,19 +141,19 @@ func (f *FileManager) GetSettingPage() table.Generator {
 		formList.AddTable(language2.Get("roots"), "roots", func(panel *types.FormPanel) {
 			panel.AddField(language2.Get("name"), "name", db.Varchar, form.Text).FieldHideLabel().
 				FieldDisplay(func(value types.FieldModel) interface{} {
-					return []string{""}
+					return strings.Split(value.Value, ",")
 				})
 			panel.AddField(language2.Get("title"), "title", db.Varchar, form.Text).FieldHideLabel().
 				FieldDisplay(func(value types.FieldModel) interface{} {
-					return []string{""}
+					return strings.Split(value.Value, ",")
 				})
 			panel.AddField(language2.Get("path"), "path", db.Varchar, form.Text).FieldHideLabel().
 				FieldDisplay(func(value types.FieldModel) interface{} {
-					return []string{""}
+					return strings.Split(value.Value, ",")
 				})
 		})
 
-		formList.SetInsertFn(func(values form2.Values) error {
+		var updateInsertFn = func(values form2.Values) error {
 			connName := values.Get("conn")
 			if connName == "" {
 				return errors.EmptyConnectionName
@@ -114,17 +169,19 @@ func (f *FileManager) GetSettingPage() table.Generator {
 					Title: values["title"][k],
 				}
 
-				_, err := f.NewMenu(menu.NewMenuData{
-					Order:      int64(k),
-					Title:      values["title"][k],
-					Icon:       icon.FolderO,
-					PluginName: f.Name(),
-					Uri:        "/" + f.URLPrefix + "/" + name + "/list",
-					Uuid:       "fm_" + name,
-				})
+				if !f.IsInstalled() {
+					_, err := f.NewMenu(menu.NewMenuData{
+						Order:      int64(k),
+						Title:      values["title"][k],
+						Icon:       icon.FolderO,
+						PluginName: f.Name(),
+						Uri:        "/" + f.URLPrefix + "/" + name + "/list",
+						Uuid:       "fm_" + name,
+					})
 
-				if err != nil {
-					logger.Error("filemanager insert menu error: ", err)
+					if err != nil {
+						logger.Error("filemanager insert menu error: ", err)
+					}
 				}
 			}
 			roots, _ := json.Marshal(rootsMap)
@@ -214,15 +271,18 @@ func (f *FileManager) GetSettingPage() table.Generator {
 			f.guard.Update(f.roots, p)
 
 			return nil
-		})
+		}
+
+		formList.SetInsertFn(updateInsertFn)
+		formList.SetUpdateFn(updateInsertFn)
 
 		formList.EnableAjaxData(types.AjaxData{
-			SuccessTitle:   language2.Get("install success"),
-			ErrorTitle:     language2.Get("install fail"),
+			SuccessTitle:   language2.Get(message1 + " success"),
+			ErrorTitle:     language2.Get(message1 + " fail"),
 			SuccessJumpURL: config.Prefix() + "/fm",
-		}).SetFormNewTitle(language2.GetHTML("filemanager installation")).
-			SetTitle(language2.Get("filemanager installation")).
-			SetFormNewBtnWord(language2.GetHTML("install"))
+		}).SetFormNewTitle(language2.GetHTML("filemanager " + message2)).
+			SetTitle(language2.Get("filemanager " + message2)).
+			SetFormNewBtnWord(language2.GetHTML(message1))
 
 		return
 	}
