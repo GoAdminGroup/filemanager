@@ -103,7 +103,7 @@ func (f *FileManager) GetSettingPage() table.Generator {
 		}
 
 		formList.AddField(language2.Get("Connection"), "conn", db.Varchar, form.SelectSingle).
-			FieldOptions(ops)
+			FieldOptions(ops).FieldHelpMsg(language2.GetHTML("sqlite3 need to import the sql first"))
 
 		formList.AddRow(func(panel *types.FormPanel) {
 			panel.AddField(language2.Get("allow upload"), "allowUpload", db.Int, form.Switch).FieldOptions(types.FieldOptions{
@@ -160,6 +160,7 @@ func (f *FileManager) GetSettingPage() table.Generator {
 			}
 			tables, err := db.WithDriver(f.Conn).Table(f.Conn.GetConfig(connName).Name).ShowTables()
 			if err != nil {
+				logger.Error("filemanager get sql tables error: ", err)
 				return err
 			}
 			var rootsMap = make(root.Roots, len(values["name"]))
@@ -185,9 +186,11 @@ func (f *FileManager) GetSettingPage() table.Generator {
 				}
 			}
 			roots, _ := json.Marshal(rootsMap)
+
 			if !utils.InArray(tables, TableName) {
 				err = f.Conn.CreateDB(connName, new(Table))
 				if err != nil {
+					logger.Error("filemanager create database table error: ", err)
 					return err
 				}
 				_, err = db.WithDriverAndConnection(connName, f.Conn).

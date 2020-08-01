@@ -62,4 +62,6 @@ var EN = language.LangSet{
 	"filemanager.filemanager setting": "FileManager Setting",
 
 	"filemanager.filemanager installation": "FileManager Installation",
+
+	"filemanager.sqlite3 need to import the sql first": "sqlite3 need to import and execute the sql command first",
 }

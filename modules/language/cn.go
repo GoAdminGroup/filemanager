@@ -63,4 +63,6 @@ var CN = language.LangSet{
 	"filemanager.filemanager setting": "文件管理器设置",
 
 	"filemanager.filemanager installation": "安装文件管理器",
+
+	"filemanager.sqlite3 need to import the sql first": "如果使用sqlite3，需要先导入执行安装sql",
 }

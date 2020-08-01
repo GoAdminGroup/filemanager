@@ -175,12 +175,12 @@ func (f *FileManager) InitPlugin(srv service.List) {
 }
 
 var info = plugins.Info{
-	Website:     "https://www.go-admin.cn",
+	Website:     "http://www.go-admin.cn/plugins/detail/DDN7VxZDTHTeaF8HUU",
 	Title:       "FileManager",
 	Description: "A plugin help you manage files in your server",
-	Version:     "v0.0.4",
+	Version:     "v0.0.5",
 	Author:      "Official",
-	Url:         "https://github.com/GoAdminGroup/filemanager/archive/v0.0.4.zip",
+	Url:         "https://github.com/GoAdminGroup/filemanager/archive/v0.0.5.zip",
 	Cover:       "",
 	Agreement:   "",
 	Uuid:        "DDN7VxZDTHTeaF8HUU",
