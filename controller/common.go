@@ -15,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/filemanager/modules/util"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -29,7 +28,7 @@ type Handler struct {
 	roots       root.Roots
 	permissions permission.Permission
 
-	HTML func(ctx *context.Context, panel types.Panel, options ...plugins.HTMLOptions)
+	HTML func(ctx *context.Context, panel types.Panel, options ...template.ExecuteOptions)
 }
 
 func NewHandler(root root.Roots, p permission.Permission) *Handler {
@@ -97,7 +96,7 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 			GetContent(),
 		Title:       language.GetHTML(h.roots.GetTitleFromPrefix(ctx)),
 		Description: fixedDescription(relativePath),
-	}, plugins.HTMLOptions{
+	}, template.ExecuteOptions{
 		Animation:  false,
 		NoCompress: true,
 	})
