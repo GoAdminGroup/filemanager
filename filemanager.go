@@ -33,7 +33,11 @@ type FileManager struct {
 	allowMove      bool
 	allowDownload  bool
 	allowRename    bool
+
+	pathValidator PathValidator
 }
+
+type PathValidator func(path string) error
 
 func init() {
 	plugins.Add(&FileManager{Base: &plugins.Base{PlugName: Name}})
@@ -106,6 +110,11 @@ func NewFileManagerWithConfig(cfg Config) *FileManager {
 
 func (f *FileManager) IsInstalled() bool {
 	return len(f.roots) != 0
+}
+
+func (f *FileManager) SetPathValidator(fn PathValidator) *FileManager {
+	f.pathValidator = fn
+	return f
 }
 
 func (f *FileManager) GetIndexURL() string {

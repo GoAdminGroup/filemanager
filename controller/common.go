@@ -73,10 +73,10 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 	prefix := h.Prefix(ctx)
 
 	if isSubDir {
-		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(GetUrl(prefix, "/list")))
+		homeBtn := types.GetDefaultButtonGroup(language.GetHTML("home"), icon.Home, action.Jump(GetUrl(prefix, "/list")))
 		btns = append(btns, homeBtn)
 		if lastDir != "" {
-			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir))))
+			lastBtn := types.GetDefaultButtonGroup(language.GetHTML("last"), icon.Backward, action.Jump(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir))))
 			btns = append(btns, lastBtn)
 		}
 	}
@@ -282,22 +282,22 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 	btns := make(types.Buttons, 0)
 
 	if h.permissions.AllowCreateDir {
-		btns = append(btns, types.GetDefaultButton(language.GetHTML("new directory"), icon.Plus,
+		btns = append(btns, types.GetDefaultButtonGroup(language.GetHTML("new directory"), icon.Plus,
 			action.PopUp("_", language.Get("new directory"), nil).
 				SetBtnTitle(language.GetHTML("create")).
 				SetUrl(GetUrl(prefix, "/create/dir/popup?path="+escapeLastDir))))
 	}
 
 	if h.permissions.AllowUpload {
-		btns = append(btns, types.GetDefaultButton(language.GetHTML("upload"), icon.Upload,
+		btns = append(btns, types.GetDefaultButtonGroup(language.GetHTML("upload"), icon.Upload,
 			action.FileUpload("_", nil).SetUrl(GetUrl(prefix, "/upload?path="+ctx.Query("path")))))
 	}
 
 	if isSubDir {
-		homeBtn := types.GetDefaultButton(language.GetHTML("home"), icon.Home, action.Jump(GetUrl(prefix, "/list")))
+		homeBtn := types.GetDefaultButtonGroup(language.GetHTML("home"), icon.Home, action.Jump(GetUrl(prefix, "/list")))
 		btns = append(btns, homeBtn)
 		if lastDir != "" {
-			lastBtn := types.GetDefaultButton(language.GetHTML("last"), icon.Backward, action.Jump(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir))))
+			lastBtn := types.GetDefaultButtonGroup(language.GetHTML("last"), icon.Backward, action.Jump(GetUrl(prefix, "/list?path="+url.QueryEscape(lastDir))))
 			btns = append(btns, lastBtn)
 		}
 	}

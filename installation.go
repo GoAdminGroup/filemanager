@@ -165,6 +165,14 @@ func (f *FileManager) GetSettingPage() table.Generator {
 			}
 			var rootsMap = make(root.Roots, len(values["name"]))
 			for k, name := range values["name"] {
+
+				if f.pathValidator != nil {
+					err = f.pathValidator(values["path"][k])
+					if err != nil {
+						return err
+					}
+				}
+
 				rootsMap[name] = root.Root{
 					Path:  values["path"][k],
 					Title: values["title"][k],
