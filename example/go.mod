@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/GoAdminGroup/filemanager v0.0.2-0.20200501062434-b986d76390e8
-	github.com/GoAdminGroup/go-admin v1.2.22
+	github.com/GoAdminGroup/go-admin v1.2.23
 	github.com/GoAdminGroup/themes v0.0.40
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/gin-gonic/gin v1.6.2
