@@ -44,7 +44,7 @@ var image = new(Image)
 var codeExtensions = [...]string{
 	".go", ".php", ".html", ".css", ".js", ".py", ".md",
 	".c", ".cpp", ".java", ".sh", ".tmpl", ".mod", ".sum",
-	".sql", ".json", ".txt",
+	".sql", ".json", ".txt", ".yml", "yaml", ".log",
 }
 
 func IsCode(ext string) bool {

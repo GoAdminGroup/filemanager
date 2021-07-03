@@ -35,6 +35,7 @@ var ExtJSMap = map[string]template.HTML{
 	".xml":    "xml",
 	".coffee": "coffee",
 	".sh":     "sh",
+	".log":     "log",
 }
 
 func (i *Code) Preview(content []byte) template.HTML {
