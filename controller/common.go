@@ -81,11 +81,11 @@ func (h *Handler) preview(ctx *context.Context, content template2.HTML, relative
 		}
 	}
 
-	btnHTML, _ := btns.Content()
+	btnHTML, _ := btns.Content(ctx)
 
 	table := comp.DataTable().
 		SetHideRowSelector(true).
-		SetButtons(btnHTML + btns.FooterContent())
+		SetButtons(btnHTML + btns.FooterContent(ctx))
 
 	h.HTML(ctx, types.Panel{
 		Content: alert + comp.Box().
@@ -184,14 +184,14 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 			SetUrl(GetUrl(prefix, "/move/popup?path="+ctx.Query("path")))
 		movePopUp.SetBtnId("fm-move-btn")
 		movePopUpJs = movePopUp.Js()
-		moveFooter = movePopUp.FooterContent()
+		moveFooter = movePopUp.FooterContent(ctx)
 
 		renamePopUp = action.PopUp("_", language.Get("rename"), nil).
 			SetBtnTitle(language.GetHTML("rename")).
 			SetUrl(GetUrl(prefix, "/rename/popup?path="+ctx.Query("path")))
 		renamePopUp.SetBtnId("fm-rename-btn")
 		renamePopUpJs = renamePopUp.Js()
-		renameFooter = renamePopUp.FooterContent()
+		renameFooter = renamePopUp.FooterContent(ctx)
 	}
 
 	for k, f := range files {
@@ -302,7 +302,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 		}
 	}
 
-	btnHTML, btnsJs := btns.Content()
+	btnHTML, btnsJs := btns.Content(ctx)
 
 	thead := types.Thead{
 		{Head: language.Get("filename"), Field: "name"},
@@ -322,7 +322,7 @@ func (h *Handler) tablePanel(ctx *context.Context, files models.Files, err error
 
 	table := comp.DataTable().
 		SetHideFilterArea(true).
-		SetButtons(btnHTML + btns.FooterContent() + moveFooter + renameFooter).
+		SetButtons(btnHTML + btns.FooterContent(ctx) + moveFooter + renameFooter).
 		SetDeleteUrl(delUrl).
 		SetActionJs(btnsJs + movePopUpJs + renamePopUpJs).
 		SetPrimaryKey("path").
@@ -346,7 +346,7 @@ func (h *Handler) panel(ctx *context.Context, path string, err error, table type
 			SetNoPadding().
 			SetHeader(table.GetDataTableHeader()).
 			WithHeadBorder().
-			SetFooter(paginator.Get(paginator.Config{
+			SetFooter(paginator.Get(ctx, paginator.Config{
 				Size:         total,
 				PageSizeList: []string{"10", "20", "30", "50"},
 				Param:        parameter.GetParam(ctx.Request.URL, defaultPageSize),
