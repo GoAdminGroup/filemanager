@@ -51,8 +51,8 @@ github.com/GoAdminGroup/demo v0.0.0-20240404022751-41c1bea9b668 h1:jg+Dz52ABdYlD
 github.com/GoAdminGroup/demo v0.0.0-20240404022751-41c1bea9b668/go.mod h1:s1R5DBbfhDOWYX41PwD/SPnr5q2rqwXR+h0+M01NmSI=
 github.com/GoAdminGroup/filemanager v0.0.7-0.20200920142100-04648eca30c9/go.mod h1:H3161Jm5n7HkUI7AAr9TJYpuxkLN5PrdQXe+4FMoOq4=
 github.com/GoAdminGroup/go-admin v1.2.24/go.mod h1:voQOP8uoaNi/V0EO3WtOvAm3fvTaNlxrmpe4nZdbzas=
-github.com/GoAdminGroup/go-admin v1.2.25 h1:pqcGu2fK2ZbcOX9IYNoxLs8xOQ16bl0g/45shSYQMOY=
-github.com/GoAdminGroup/go-admin v1.2.25/go.mod h1:QXj94ZrDclKzqwZnAGUWaK3qY1Wfr6/Qy5GnRGeXR+k=
+github.com/GoAdminGroup/go-admin v1.2.26 h1:kk18rVrteLcrzH7iMM5p/13jghDC5n3DJG/7zAnbnEU=
+github.com/GoAdminGroup/go-admin v1.2.26/go.mod h1:QXj94ZrDclKzqwZnAGUWaK3qY1Wfr6/Qy5GnRGeXR+k=
 github.com/GoAdminGroup/html v0.0.1 h1:SdWNWl4OKPsvDk2GDp5ZKD6ceWoN8n4Pj6cUYxavUd0=
 github.com/GoAdminGroup/html v0.0.1/go.mod h1:A1laTJaOx8sQ64p2dE8IqtstDeCNBHEazrEp7hR5VvM=
 github.com/GoAdminGroup/librarian v0.0.5/go.mod h1:XYLCXuTPEUskGuP7wM54Lh4TeSZaA0cnynpF5Ughajs=

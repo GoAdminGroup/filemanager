@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/GoAdminGroup/demo v0.0.0-20240404022751-41c1bea9b668
-	github.com/GoAdminGroup/go-admin v1.2.25
+	github.com/GoAdminGroup/go-admin v1.2.26
 	github.com/GoAdminGroup/html v0.0.1
 	github.com/gavv/httpexpect v2.0.0+incompatible
 	github.com/h2non/filetype v1.1.3
